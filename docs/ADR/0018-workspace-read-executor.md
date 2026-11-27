@@ -34,7 +34,7 @@ The session and agent identity must come from trusted host runtime context, not 
 
 ## Consequences and limitations
 
-This is one read-only tool, not a general sandbox. It blocks traversal and symlink following for the opened path and rejects mount/device changes, but it does not establish process isolation, defend against a compromised host, distinguish hard links from ordinary workspace files, or make a mutable workspace immutable. The configured workspace root is trusted host configuration.
+This is one read-only tool, not a general sandbox. It blocks lexical traversal and symlink following for the opened path and rejects changes in device ID, but it does not detect same-device bind mounts, prevent an untrusted writer from renaming directories concurrently, establish process isolation, defend against a compromised host, distinguish hard links from ordinary workspace files, or make a mutable workspace immutable. The configured workspace root is trusted host configuration, and the workspace tree must not be writable by untrusted principals while reads are in progress.
 
 The tool is Linux/POSIX-specific and fails closed when required no-follow directory flags are unavailable. It does not provide writes, shell commands, network access, process creation or device access.
 
