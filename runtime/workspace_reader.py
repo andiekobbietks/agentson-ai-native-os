@@ -113,6 +113,11 @@ class WorkspaceReadExecutor:
         Session and agent identifiers must come from the trusted host runtime,
         not from an untrusted tool payload.
         """
+        if completed_at_ms is not None and (
+            type(completed_at_ms) is not int or completed_at_ms < now_ms
+        ):
+            return ExecutionResult(False, "invalid_request_or_resource_path", request_id)
+
         try:
             components = self._components(relative_path)
             resource = "workspace:/" + "/".join(components)
