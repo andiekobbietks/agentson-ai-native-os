@@ -2,7 +2,7 @@
 
 An independently developed research and engineering project exploring an AI-native, x86-64 bare-metal platform, beginning with a reproducible QEMU target.
 
-**Current maturity:** the independent x86-64 kernel boot, Multiboot2 memory-map parsing, bounded physical-frame allocator, 4 KiB page-table operations, IDT exception diagnostics and a controlled PIT/PIC IRQ0 timer path have been exercised in QEMU through GitHub Actions. The two-task ring-0 preemptive context-switch experiment is QEMU-verified in GitHub Actions run #57. A host-side GGUF metadata/tensor-directory inspector, deny-by-default capability policy core and one read-only workspace-file executor (8 MiB maximum response) are implemented. Native model inference and an isolated/general-purpose agent runtime are not implemented.
+**Current maturity:** the independent x86-64 kernel boot, Multiboot2 memory-map parsing, bounded physical-frame allocator, 4 KiB page-table operations, IDT exception diagnostics and a controlled PIT/PIC IRQ0 timer path have been exercised in QEMU through GitHub Actions. The two-task ring-0 preemptive context-switch experiment is QEMU-verified in GitHub Actions run #75. A host-side GGUF inspector and bounded dequantizer for F32, F16, Q4_0, Q4_1, Q5_0, Q5_1, Q8_0 and Q8_1 are implemented, alongside the deny-by-default capability policy core and one read-only workspace-file executor (8 MiB maximum response). Native model inference and an isolated/general-purpose agent runtime are not implemented.
 
 ## How the project began
 
@@ -68,14 +68,14 @@ Both repositories are reported as MIT-licensed. Before adapting any file, verify
 
 ## Inspecting a GGUF model file
 
-The host-side inspector reads GGUF v2/v3 little-endian headers and tensor metadata without loading tensor payloads:
+The host-side inspector reads GGUF v2/v3 little-endian headers and tensor metadata without loading tensor payloads. The separate tensor decoder can dequantize supported payload buffers:
 
 ```bash
 python3 tools/gguf_inspect.py path/to/model.gguf
 make test-model-format
 ```
 
-It is a format-validation utility, not an inference engine. See [inference design](docs/INFERENCE_DESIGN.md) for the supported tensor extent checks and limitations.
+The inspector and decoder are format-validation/reference utilities, not an inference engine. See [inference design](docs/INFERENCE_DESIGN.md) for supported layouts and limitations.
 
 ## Roadmap
 
@@ -83,7 +83,7 @@ It is a format-validation utility, not an inference engine. See [inference desig
 2. **Boot and kernel foundations:** independent GRUB Multiboot2 x86-64 boot, memory-map parsing, bounded frame allocation, 4 KiB page mapping, IDT exception diagnostics and a controlled legacy timer interrupt path.
 3. **Scheduling:** validate the fixed two-task ring-0 context-switch experiment; then design task lifecycle, stack protection and interrupt/locking invariants before broader scheduling.
 4. **Concurrency and devices:** SMP correctness, APIC-based interrupt routing and narrowly scoped device support.
-5. **Reference inference:** GGUF container inspection, tensor decoding, tokenizer validation and a reproducible host-side inference baseline before considering any guest integration.
+5. **Reference inference:** GGUF container inspection and selected tensor dequantization are implemented; tokenizer validation, K-quant formats and a reproducible host-side inference baseline remain before any guest integration.
 6. **Agent execution:** isolated runtime, explicit capabilities, resource quotas and denied-operation tests.
 7. **Interoperability:** AgentSON, OIDL and JITLLM adapters where their contracts are defined and justified.
 8. **Hardening and evaluation:** fault injection, reproducibility, security and performance evaluation.
@@ -102,9 +102,10 @@ Each milestone is to be delivered through one or more focused pull requests. A d
 | 4 KiB page-table map/unmap/translate | QEMU-verified; single-core bootstrap only |
 | IDT and expected page-fault diagnostics | QEMU-verified |
 | PIT/PIC IRQ0 timer path | QEMU-verified; legacy PIC, single-core test path |
-| Two-task ring-0 context switching | QEMU-verified in GitHub Actions run #46; both tasks ran, boot context resumed and page-fault test passed |
+| Two-task ring-0 context switching | QEMU-verified in GitHub Actions run #75; both tasks ran, boot context resumed and page-fault test passed |
 | SMP, userspace and process isolation | Not implemented |
 | GGUF metadata/tensor-directory inspection | Host-side bounded parser and malformed-file tests; no model execution |
+| GGUF tensor dequantization | Host-side reference decoder for eight tensor types; no matrix multiplication or inference |
 | Native model loading/inference | Not implemented |
 | Agent capability policy | Host-side exact-scope grants, revocation, approvals and session budgets |
 | Read-only workspace executor | One file-read tool with exact grants, no-follow opens and output limits; no process isolation |

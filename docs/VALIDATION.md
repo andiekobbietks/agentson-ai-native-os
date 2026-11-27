@@ -23,7 +23,8 @@
 | Two-task context switch | Both task counters advance, boot context resumes, timer stops, expected page fault still passes | Passed in GitHub Actions run #48 (QEMU) |
 | SMP | AP startup, per-core state, locking and TLB shootdown tests | Not implemented |
 | Model loading/inference | Validated model/tokenizer fixtures, deterministic fixed-prompt output and reference comparison | Not implemented |
-| GGUF model inspection | Header/version, metadata, arrays, tensor directory, alignment, bounds and malformed-file tests | Passed in model-format workflow #5 (17 tests) |
+| GGUF model inspection | Header/version, metadata, arrays, tensor directory, alignment, bounds and malformed-file tests | Passed in model-format workflow #26 (19 tests) |
+| GGUF tensor dequantization | Golden vectors for F32/F16/Q4_0/Q4_1/Q5_0/Q5_1/Q8_0/Q8_1, malformed blocks and output limits | Passed in model-format workflow #26 (17 tests) |
 | Agent policy core | Exact grants, expiry/revocation, request-bound approvals, budgets, replay protection, concurrent calls and output-violation lockout | Passed in agent-policy workflow #1 (20 tests) |
 | Read-only workspace executor | Exact grant, path traversal, symlink rejection, regular-file checks, 8 MiB hard output cap, path-depth bound and budget settlement | Passed in workspace-read workflow #4 (16 tests) |
 | Isolated agent execution | Process/VM isolation, syscall policy and OS-enforced quotas | Not implemented |
@@ -43,4 +44,4 @@ The QEMU test runs in a disposable virtual machine and checks serial markers plu
 
 ## Evidence still required
 
-The current bootstrap kernel does not establish production correctness, isolation or security. Before expanding the implementation, add targeted negative tests, stack and interrupt invariants, fault injection, reproducible artifact hashes and review of the actual workflow output. The two-task scheduler experiment passed GitHub Actions run #46, including its QEMU serial-marker and expected-exit checks. Broader scheduler correctness, stack guards, interrupt nesting and SMP remain unvalidated.
+The current bootstrap kernel does not establish production correctness, isolation or security. Before expanding the implementation, add targeted negative tests, stack and interrupt invariants, fault injection, reproducible artifact hashes and review of the actual workflow output. The two-task scheduler experiment passed GitHub Actions run #75, including its QEMU serial-marker and expected-exit checks. Broader scheduler correctness, stack guards, interrupt nesting and SMP remain unvalidated.

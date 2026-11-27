@@ -74,6 +74,22 @@ class GGUFInspectorTests(unittest.TestCase):
         self.assertIsNone(result["tensors"][0]["byte_size"])
         self.assertIn("offsets only", result["extent_validation"])
 
+    def test_valid_q8_1_tensor_extent_is_36_bytes(self):
+        payload = struct.pack("<ee", 0.5, 0.0) + bytes(32)
+        result = inspect_gguf_bytes(_build_gguf(
+            tensors=[("blk.0.attn_q.weight", (32,), 9, 0)],
+            tensor_data=payload,
+        ))
+        self.assertEqual(result["tensors"][0]["type_name"], "Q8_1")
+        self.assertEqual(result["tensors"][0]["byte_size"], 36)
+
+    def test_truncated_q8_1_tensor_extent_rejected(self):
+        with self.assertRaisesRegex(GGUFError, "exceeds file bounds"):
+            inspect_gguf_bytes(_build_gguf(
+                tensors=[("blk.0.attn_q.weight", (32,), 9, 0)],
+                tensor_data=bytes(35),
+            ))
+
     def test_metadata_array_is_skipped_with_bounds(self):
         array = struct.pack("<IQ", 8, 2) + _string("hello") + _string("world")
         metadata = [
