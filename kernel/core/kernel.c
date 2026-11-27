@@ -65,7 +65,6 @@ void kernel_main(uint32_t boot_magic, uint32_t boot_info_address) {
         serial_write("\n");
         stop_with_error("invalid Multiboot2 magic");
     }
-
     if (boot_info_address == 0u ||
         boot_info_address >= IDENTITY_MAP_LIMIT ||
         (boot_info_address & 7u) != 0u)
@@ -100,6 +99,9 @@ void kernel_main(uint32_t boot_magic, uint32_t boot_info_address) {
                               boot_info_address, boot_info_end))
         stop_with_error("physical frame allocator initialisation failed");
 
+    if (!paging_init((uint64_t)(uintptr_t)pml4))
+        stop_with_error("page-table manager initialisation failed");
+
     const uint64_t first_frame = frame_alloc();
     const uint64_t second_frame = frame_alloc();
     if (first_frame == 0u || second_frame == 0u ||
@@ -107,14 +109,49 @@ void kernel_main(uint32_t boot_magic, uint32_t boot_info_address) {
         (first_frame & 0xFFFu) != 0u ||
         (second_frame & 0xFFFu) != 0u)
         stop_with_error("physical frame allocation test failed");
-    if (!frame_free(first_frame) || frame_free(first_frame) ||
+
+    const uint64_t high_virtual = 0x40000000ull;
+    const uint64_t split_virtual = 0x20000000ull;
+
+    /* A fresh PDPT branch (1 GiB) exercises table creation. */
+    if (!paging_map_page(high_virtual, second_frame, PAGING_WRITABLE) ||
+        paging_map_page(high_virtual, second_frame, PAGING_WRITABLE))
+        stop_with_error("new page-table branch or duplicate-map check failed");
+
+    /* This address begins inside a 2 MiB bootstrap mapping; unmap splits it. */
+    if (!paging_unmap_page(split_virtual) ||
+        !paging_map_page(split_virtual, first_frame, PAGING_WRITABLE))
+        stop_with_error("huge-page split or remapping failed");
+
+    volatile uint64_t *high_mapping =
+        (volatile uint64_t *)(uintptr_t)high_virtual;
+    volatile uint64_t *split_mapping =
+        (volatile uint64_t *)(uintptr_t)split_virtual;
+    *high_mapping = 0xA63E50A110C0FFEEull;
+    *split_mapping = 0xB007B007C0DEC0DEull;
+
+    uint64_t translated = 0u;
+    if (*high_mapping != 0xA63E50A110C0FFEEull ||
+        *split_mapping != 0xB007B007C0DEC0DEull ||
+        !paging_translate(high_virtual, &translated) ||
+        translated != second_frame ||
+        !paging_translate(split_virtual, &translated) ||
+        translated != first_frame ||
+        paging_map_page(high_virtual + 1u, second_frame, PAGING_WRITABLE))
+        stop_with_error("page-table translation or alignment check failed");
+
+    if (!paging_unmap_page(high_virtual) ||
+        !paging_unmap_page(split_virtual) ||
+        paging_translate(high_virtual, &translated) ||
+        !frame_free(first_frame) || frame_free(first_frame) ||
         !frame_free(second_frame))
-        stop_with_error("physical frame release test failed");
+        stop_with_error("page-table unmap or frame release failed");
 
     serial_write("FRAME_ALLOC: valid\n");
+    serial_write("PAGING: valid\n");
     serial_write("FREE_FRAMES: ");
     serial_write_hex64(frame_allocator_free_count());
     serial_write("\n");
-    serial_write("BOOT_OK: agentson-x86_64-memory-map-frame-allocator\n");
+    serial_write("BOOT_OK: agentson-x86_64-page-table-manager\n");
     qemu_success_exit();
 }
