@@ -9,7 +9,7 @@ QEMU ?= qemu-system-x86_64
 PYTHON ?= python3
 CFLAGS := -m64 -std=c11 -O2 -Wall -Wextra -Werror -ffreestanding -fno-stack-protector -fno-pic -fno-pie -fno-builtin -mno-red-zone -mgeneral-regs-only -Ikernel/include
 LDFLAGS := -m elf_x86_64 -nostdlib -z max-page-size=0x1000 -T kernel/arch/x86_64/linker.ld
-.PHONY: all clean check iso test test-unit toolchain-check
+.PHONY: all clean check iso test test-unit test-model-format toolchain-check
 all: $(KERNEL_ISO)
 $(BUILD_DIR):
 	mkdir -p $@
