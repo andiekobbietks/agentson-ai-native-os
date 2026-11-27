@@ -23,7 +23,7 @@
 | Two-task context switch | Both task counters advance, boot context resumes, timer stops, expected page fault still passes | Passed in GitHub Actions run #48 (QEMU) |
 | SMP | AP startup, per-core state, locking and TLB shootdown tests | Not implemented |
 | Model loading/inference | Validated model/tokenizer fixtures, deterministic fixed-prompt output and reference comparison | Not implemented |
-| GGUF model inspection | Header/version, metadata, arrays, tensor directory, alignment, bounds and malformed-file tests | Passed in model-format workflow #1 (16 tests) |\n| Agent permissions | Positive and negative capability tests, quotas and fail-closed behaviour | Not implemented |
+| GGUF model inspection | Header/version, metadata, arrays, tensor directory, alignment, bounds and malformed-file tests | Passed in model-format workflow #5 (17 tests) |\n| Agent permissions | Positive and negative capability tests, quotas and fail-closed behaviour | Not implemented |
 | AgentSON trace | Schema validation, ordering, integrity, replay and failure tests | Not implemented |
 
 ## Reproduction
