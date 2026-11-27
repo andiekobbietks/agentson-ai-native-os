@@ -2,7 +2,7 @@
 
 An independently developed research and engineering project exploring an AI-native, x86-64 bare-metal platform, beginning with a reproducible QEMU target.
 
-**Current maturity:** independent x86-64 kernel boot is verified in QEMU. Multiboot2 memory-map parsing and a bounded physical-frame allocator are QEMU-verified; 4 KiB page-table management is now under validation.
+**Current maturity:** independent x86-64 kernel boot is verified in QEMU. Multiboot2 memory-map parsing and a bounded physical-frame allocator are QEMU-verified; 4 KiB page-table mapping, unmapping and translation are now under QEMU validation.
 
 ## How the project began
 
