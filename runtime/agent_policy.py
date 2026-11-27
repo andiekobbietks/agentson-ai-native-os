@@ -45,10 +45,12 @@ class CapabilityGrant:
         if not isinstance(self.capability, str) or not _CAPABILITY.fullmatch(self.capability):
             raise ValueError("capability must use a canonical lowercase identifier")
         _require_scope(self.resource, "resource")
-        if self.expires_at_ms <= 0:
-            raise ValueError("expires_at_ms must be positive")
-        if self.max_calls <= 0:
-            raise ValueError("max_calls must be positive")
+        if type(self.expires_at_ms) is not int or self.expires_at_ms <= 0:
+            raise ValueError("expires_at_ms must be a positive integer")
+        if type(self.max_calls) is not int or self.max_calls <= 0:
+            raise ValueError("max_calls must be a positive integer")
+        if not isinstance(self.requires_confirmation, bool):
+            raise ValueError("requires_confirmation must be boolean")
 
 
 @dataclass(frozen=True)
@@ -58,12 +60,12 @@ class SessionBudget:
     deadline_ms: int
 
     def __post_init__(self) -> None:
-        if self.max_actions <= 0:
-            raise ValueError("max_actions must be positive")
-        if self.max_output_bytes < 0:
-            raise ValueError("max_output_bytes cannot be negative")
-        if self.deadline_ms <= 0:
-            raise ValueError("deadline_ms must be positive")
+        if type(self.max_actions) is not int or self.max_actions <= 0:
+            raise ValueError("max_actions must be a positive integer")
+        if type(self.max_output_bytes) is not int or self.max_output_bytes < 0:
+            raise ValueError("max_output_bytes must be a non-negative integer")
+        if type(self.deadline_ms) is not int or self.deadline_ms <= 0:
+            raise ValueError("deadline_ms must be a positive integer")
 
 
 @dataclass(frozen=True)
@@ -84,8 +86,8 @@ class Approval:
         if not isinstance(self.capability, str) or not _CAPABILITY.fullmatch(self.capability):
             raise ValueError("capability must use a canonical lowercase identifier")
         _require_scope(self.resource, "resource")
-        if self.expires_at_ms <= 0:
-            raise ValueError("expires_at_ms must be positive")
+        if type(self.expires_at_ms) is not int or self.expires_at_ms <= 0:
+            raise ValueError("expires_at_ms must be a positive integer")
 
 
 @dataclass(frozen=True)
@@ -105,8 +107,8 @@ class ToolRequest:
         if not isinstance(self.capability, str) or not _CAPABILITY.fullmatch(self.capability):
             raise ValueError("capability must use a canonical lowercase identifier")
         _require_scope(self.resource, "resource")
-        if self.output_limit_bytes < 0:
-            raise ValueError("output_limit_bytes cannot be negative")
+        if type(self.output_limit_bytes) is not int or self.output_limit_bytes < 0:
+            raise ValueError("output_limit_bytes must be a non-negative integer")
         if self.approval_id is not None:
             _require_identifier(self.approval_id, "approval_id")
 
@@ -238,7 +240,7 @@ class PolicyEngine:
         Request IDs are single-use, including denied requests. An allowed call
         consumes one action from both the grant and the session budget.
         """
-        if not isinstance(now_ms, int) or now_ms < 0:
+        if type(now_ms) is not int or now_ms < 0:
             raise ValueError("now_ms must be a non-negative integer")
 
         with self._lock:
@@ -316,9 +318,9 @@ class PolicyEngine:
 
     def settle(self, request_id: str, actual_output_bytes: int, now_ms: int) -> bool:
         """Settle a completed call; over-limit output exhausts the session budget."""
-        if actual_output_bytes < 0:
-            raise ValueError("actual_output_bytes cannot be negative")
-        if not isinstance(now_ms, int) or now_ms < 0:
+        if type(actual_output_bytes) is not int or actual_output_bytes < 0:
+            raise ValueError("actual_output_bytes must be a non-negative integer")
+        if type(now_ms) is not int or now_ms < 0:
             raise ValueError("now_ms must be a non-negative integer")
 
         with self._lock:
