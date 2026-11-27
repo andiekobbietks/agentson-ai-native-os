@@ -10,7 +10,7 @@ x86-64 in QEMU. Keep hardware-specific code behind explicit architecture modules
 2. Kernel foundations: memory, exceptions, interrupts and scheduling.
 3. Hardware abstraction and drivers.
 4. Inference backend and model lifecycle.
-5. Host-side capability policy core and isolated agent executor with explicit capabilities and resource limits.
+5. Host-side capability policy core and a minimal read-only workspace executor; a general isolated agent executor remains future work.
 6. AgentSON event and provenance adapter after schema conformance is established.
 
 ## Design constraints

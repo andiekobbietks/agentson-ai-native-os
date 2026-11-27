@@ -1,6 +1,6 @@
 # Agent Runtime
 
-**Status:** Host-side deny-by-default capability policy core implemented; tool execution, process isolation and a complete agent runtime are not implemented.
+**Status:** Host-side deny-by-default capability policy core and one read-only workspace-file executor implemented; general tool execution, process isolation and a complete agent runtime are not implemented.
 
 ## Placement
 
@@ -19,7 +19,7 @@ The host-side policy engine currently provides:
 - settlement/cancellation of output reservations, and session lockout after an executor output-limit violation;
 - thread-safe authorization and in-memory decision audit records.
 
-Resource scopes are exact strings. Wildcards are rejected. Grant expiry and the session deadline are checked when a request is authorised; they do not terminate an operation already in progress. Output reservations are accounting controls, not a substitute for an executor-side output limiter. The policy engine does not canonicalise filesystem paths, resolve symlinks, open files, connect to networks or execute processes. The eventual executor must canonicalise the resource independently and enforce the same scope at the point of use.
+Resource scopes are exact strings. Wildcards are rejected. Grant expiry and the session deadline are checked when a request is authorised; they do not terminate an operation already in progress. Output reservations are accounting controls, not a substitute for an executor-side output limiter. The policy engine itself does not access resources. The workspace executor validates relative path components and uses descriptor-relative no-follow opens; future executors must independently enforce their own resource boundaries at the point of use.
 
 ## Execution contract
 
@@ -27,11 +27,17 @@ Resource scopes are exact strings. Wildcards are rejected. Grant expiry and the 
 2. A trusted policy authority issues grants scoped to one session, agent, capability and exact resource.
 3. The agent proposes a typed request with a unique request ID and output reservation.
 4. The policy core returns allow/deny and records the decision.
-5. Only an executor may perform an allowed operation, and it must enforce OS-level isolation and output limits.
+5. The initial workspace executor may perform only the granted read-only file operation; future general executors must additionally enforce OS-level isolation and resource limits.
 6. The executor settles or cancels the reservation and reports the result.
 7. Grants are revoked and session resources released on completion or failure.
 
 An allow decision is permission to attempt an operation, not proof that the operation is safe or that the executor enforced the boundary.
+
+## Read-only workspace executor
+
+The initial executor exposes only `workspace.read` for one regular file beneath a trusted absolute workspace root. It constructs an exact `workspace:/relative/path` resource, obtains a policy decision, and uses descriptor-relative `O_NOFOLLOW` / `O_DIRECTORY` opens for each path component. It rejects traversal, symlinks, non-regular files and device changes, checks file metadata before and after reading, and enforces the reserved output limit with an 8 MiB per-read hard cap and a 128-component path-depth cap.
+
+The root path and session/agent identities are trusted host configuration. This tool is Linux/POSIX-specific. It does not write files, list directories, execute commands, connect to networks or create processes. It does not prevent hard links within the workspace from referring to data also reachable elsewhere, detect same-device bind mounts, or prevent an untrusted writer from renaming directories during a read. It does not provide process isolation. The workspace must be curated by the host and must not be writable by untrusted principals while this tool is in use.
 
 ## AgentSON compatibility gate
 
@@ -45,7 +51,7 @@ Those are materially different serialization contracts. The policy core therefor
 
 ## Not implemented
 
-- tool adapters or arbitrary tool execution;
+- general tool adapters or arbitrary tool execution beyond the single read-only workspace.read tool;
 - OS process/container/VM isolation;
 - filesystem, network, shell or device sandboxing;
 - user-mode processes, syscalls, IPC and per-process address spaces;
@@ -55,4 +61,4 @@ Those are materially different serialization contracts. The policy core therefor
 
 ## Failure handling
 
-Timeouts, crashes, malformed requests, expired grants and quota exhaustion must fail closed. The policy core cannot contain a malicious or compromised executor. Until an isolated executor exists, do not use this library to authorise real filesystem, network, shell, credential or device operations.
+Timeouts, crashes, malformed requests, expired grants and quota exhaustion must fail closed. The policy core cannot contain a malicious or compromised executor. Do not expose policy-management methods to agent code. Use the read-only workspace tool only in a trusted host process over a curated workspace; do not authorise writes, network, shell, credentials or device operations until an isolated executor exists.

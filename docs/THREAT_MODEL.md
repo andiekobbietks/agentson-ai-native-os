@@ -24,10 +24,12 @@
 |---|---|---|
 | Malformed model or tokenizer | Parse in unprivileged process; strict bounds checks | Fuzz and malformed-fixture tests |
 | Agent prompt injection | Treat content as data; tool allowlists and confirmation gates | Denied-tool tests |
-| Privilege escalation | Keep inference/tools out of ring 0; host policy core only authorises exact scopes and does not execute tools | Policy negative tests; process isolation and executor boundary not implemented |
+| Privilege escalation | Keep inference/tools out of ring 0; host policy core and one read-only workspace executor only | Policy and workspace path tests; process isolation and general executor boundary not implemented |
+| Path traversal / symlink escape | Reject dot segments; use descriptor-relative no-follow opens for every workspace path component | Workspace reader tests |
+| Concurrent workspace mutation / same-device mount aliasing | Require host-curated, non-agent-writable workspace; do not claim full sandbox containment | Adversarial rename, bind-mount and hard-link tests remain future work |
 | Shared-memory corruption | Read-only mapping where possible; validate BAR size/offsets; bounds-check all reads | Device emulation and corruption tests |
 | DMA/device compromise | No unrestricted DMA initially; IOMMU policy before passthrough | Threat review and IOMMU tests |
-| Resource exhaustion | Host policy core enforces session action/output budgets and deadlines; executor-level CPU/memory/time limits remain required | Policy unit tests pass; executor enforcement not implemented |
+| Resource exhaustion | Host policy core enforces session action/output budgets and deadlines; read-only executor enforces a per-read byte limit | Policy and workspace tests pass; executor-level CPU/memory/time limits remain required |
 | Trace tampering | Hash chaining/signatures only with defined key lifecycle; external anchoring | Tamper/replay tests |
 | Malicious or stale firmware | Document boot trust assumptions; Secure Boot measured-boot work is future scope | Platform-specific verification |
 
