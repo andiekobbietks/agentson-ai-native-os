@@ -1,6 +1,6 @@
 # Component Interfaces
 
-**Status:** Initial contracts; not implemented.
+**Status:** Initial contracts; the host policy core and read-only workspace reader are implemented. Kernel/guest interfaces remain proposed.
 
 | Component | Responsibility | Boundary |
 |---|---|---|
