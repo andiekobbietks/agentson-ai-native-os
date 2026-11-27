@@ -20,4 +20,4 @@ jobs:
         with:
           python-version: "3.12"
       - name: Run GGUF parser tests
-        run: python -m unittest discover -s tests/unit -p "test_gguf_inspect.py" -v
+        run: python -m unittest discover -s tests/unit -p "test_gguf_*.py" -v
