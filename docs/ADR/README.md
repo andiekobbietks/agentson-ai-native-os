@@ -22,8 +22,7 @@ ADRs are decision records, not implementation tickets. An accepted decision desc
 | [0012](0012-x86-64-page-table-manager.md) | Explicit 4 KiB page mapping, unmapping and translation | Accepted for bootstrap kernel milestones |
 | [0013](0013-idt-and-exception-diagnostics.md) | Install IDT gates and diagnose CPU exceptions before enabling interrupts | Accepted for bootstrap kernel milestones |
 | [0014](0014-pit-timer-interrupt.md) | Use PIT and remapped legacy PIC for a controlled IRQ0 timer test | Accepted for bootstrap interrupt milestone |
-| [0015](0015-preemptive-kernel-task-scheduler.md) | Two-task ring-0 round-robin scheduling from timer interrupt frames | Accepted for bootstrap scheduling milestone |
-| [0012](0012-x86-64-page-table-manager.md) | Explicit 4 KiB page mapping, unmapping and translation | Accepted for bootstrap kernel milestones |
+| [0015](0015-preemptive-kernel-task-scheduler.md) | Two-task ring-0 round-robin scheduling from timer interrupt frames | Proposed pending QEMU validation |
 
 ## When to write an ADR
 
