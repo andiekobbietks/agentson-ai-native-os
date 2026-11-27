@@ -1,13 +1,13 @@
 # Memory Model
 
-**Status:** Initial boot-information parser and physical-frame allocator passed host unit tests and QEMU integration in GitHub Actions run #13.
+**Status:** The Multiboot2 parser, bounded physical-frame allocator, 4 KiB page-table operations, IDT exception diagnostics, PIT/PIC IRQ0 path and fixed two-task ring-0 scheduler have passed their documented host/QEMU checks. The scheduler prototype passed GitHub Actions run #48.
 
 ## Address spaces
 
 - Physical addresses identify RAM/device ranges from the boot memory map.
 - The initial kernel identity maps physical addresses from 0 through 1 GiB using 2 MiB pages.
 - The current allocator manages only 4 KiB frames below 1 GiB. It does not itself map allocated frames into a new virtual address space.
-- Kernel virtual addresses are established by explicit page tables; a separate page-table manager is not implemented yet.
+- The page-table manager supports 4 KiB map/unmap/translate operations and splitting a 2 MiB huge-page mapping. The bootstrap identity map remains limited to the first 1 GiB.
 - User/agent address spaces are a later milestone and must not share unrestricted kernel mappings.
 - MMIO and PCI BAR ranges are mapped separately with appropriate cacheability and permissions.
 
@@ -33,7 +33,7 @@ The 1 GiB limit is deliberate: it matches the temporary identity map. Raising th
 
 ## Deliberate limitations
 
-The allocator is a single-core bootstrap allocator. It has no SMP locking, NUMA awareness, buddy coalescing, slab allocation, page ownership metadata or virtual mapping integration. Do not call it concurrently. It is not a general-purpose production allocator.
+The allocator is a single-core bootstrap allocator. It has no SMP locking, NUMA awareness, buddy coalescing, slab allocation, page ownership metadata or virtual mapping integration. Do not call it concurrently. It is not a general-purpose production allocator. The scheduler prototype is also single-core, fixed at two ring-0 tasks, and has no guarded stacks, userspace isolation or general task lifecycle.
 
 ## Huge pages
 
