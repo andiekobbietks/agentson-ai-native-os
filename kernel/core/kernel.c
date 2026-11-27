@@ -4,6 +4,7 @@
 #include "multiboot2.h"
 #include "paging.h"
 #include "serial.h"
+#include "timer.h"
 
 #define MULTIBOOT2_BOOT_MAGIC 0x36D76289u
 #define MAX_BOOTINFO_BYTES (1024u * 1024u)
