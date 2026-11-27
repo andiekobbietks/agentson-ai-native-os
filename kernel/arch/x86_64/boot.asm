@@ -21,6 +21,33 @@ _start:
     cld
     mov [boot_magic], eax
     mov [boot_info], ebx
+
+    ; Minimal COM1 setup before paging so a failed transition is diagnosable.
+    mov dx, 0x3F9
+    xor al, al
+    out dx, al
+    mov dx, 0x3FB
+    mov al, 0x80
+    out dx, al
+    mov dx, 0x3F8
+    mov al, 0x01
+    out dx, al
+    mov dx, 0x3F9
+    xor al, al
+    out dx, al
+    mov dx, 0x3FB
+    mov al, 0x03
+    out dx, al
+    mov dx, 0x3FA
+    mov al, 0xC7
+    out dx, al
+    mov dx, 0x3FC
+    mov al, 0x0B
+    out dx, al
+    mov dx, 0x3F8
+    mov al, 'E'
+    out dx, al
+
     mov esp, stack_top
     mov eax, pdpt
     or eax, 0x03
@@ -52,10 +79,16 @@ _start:
     mov eax, cr0
     or eax, 1 << 31
     mov cr0, eax
+    mov dx, 0x3F8
+    mov al, 'P'
+    out dx, al
     lgdt [gdt64.pointer]
     jmp 0x08:long_mode_start
 BITS 64
 long_mode_start:
+    mov dx, 0x3F8
+    mov al, 'L'
+    out dx, al
     mov ax, 0x10
     mov ds, ax
     mov es, ax
