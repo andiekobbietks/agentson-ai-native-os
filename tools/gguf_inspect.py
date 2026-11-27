@@ -282,11 +282,24 @@ def _inspect(reader: Reader) -> dict:
     }
 
 
+def inspect_gguf_stream(stream: BinaryIO) -> dict:
+    """Inspect a seekable binary stream without closing or repositioning it."""
+    try:
+        original_position = stream.tell()
+        stream.seek(0)
+    except (AttributeError, OSError) as exc:
+        raise GGUFError("GGUF input stream must be seekable") from exc
+    try:
+        return _inspect(Reader(stream))
+    finally:
+        stream.seek(original_position)
+
+
 def inspect_gguf(path: str | os.PathLike[str]) -> dict:
     """Inspect a GGUF file without loading its tensor payloads into memory."""
     try:
         with open(path, "rb") as stream:
-            return _inspect(Reader(stream))
+            return inspect_gguf_stream(stream)
     except OSError:
         raise
 
