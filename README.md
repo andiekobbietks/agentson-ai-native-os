@@ -2,7 +2,7 @@
 
 An independently developed research and engineering project exploring an AI-native, x86-64 bare-metal platform, beginning with a reproducible QEMU target.
 
-**Current maturity:** the independent x86-64 kernel boot, Multiboot2 memory-map parsing, bounded physical-frame allocator, 4 KiB page-table operations, IDT exception diagnostics and a controlled PIT/PIC IRQ0 timer path have been exercised in QEMU through GitHub Actions. The two-task ring-0 preemptive context-switch experiment is QEMU-verified in GitHub Actions run #46. Native model inference and an agent runtime are not implemented. Native model inference and an agent runtime are not implemented.
+**Current maturity:** the independent x86-64 kernel boot, Multiboot2 memory-map parsing, bounded physical-frame allocator, 4 KiB page-table operations, IDT exception diagnostics and a controlled PIT/PIC IRQ0 timer path have been exercised in QEMU through GitHub Actions. The two-task ring-0 preemptive context-switch experiment is QEMU-verified in GitHub Actions run #46. A host-side GGUF metadata/tensor-directory inspector is implemented; it does not execute models. Native model inference and an agent runtime are not implemented.
 
 ## How the project began
 
@@ -72,7 +72,7 @@ Both repositories are reported as MIT-licensed. Before adapting any file, verify
 2. **Boot and kernel foundations:** independent GRUB Multiboot2 x86-64 boot, memory-map parsing, bounded frame allocation, 4 KiB page mapping, IDT exception diagnostics and a controlled legacy timer interrupt path.
 3. **Scheduling:** validate the fixed two-task ring-0 context-switch experiment; then design task lifecycle, stack protection and interrupt/locking invariants before broader scheduling.
 4. **Concurrency and devices:** SMP correctness, APIC-based interrupt routing and narrowly scoped device support.
-5. **Reference inference:** model-format validation and a reproducible host-side inference baseline before considering any privileged integration.
+5. **Reference inference:** GGUF container inspection, tensor decoding, tokenizer validation and a reproducible host-side inference baseline before considering any guest integration.
 6. **Agent execution:** isolated runtime, explicit capabilities, resource quotas and denied-operation tests.
 7. **Interoperability:** AgentSON, OIDL and JITLLM adapters where their contracts are defined and justified.
 8. **Hardening and evaluation:** fault injection, reproducibility, security and performance evaluation.
@@ -93,7 +93,7 @@ Each milestone is to be delivered through one or more focused pull requests. A d
 | PIT/PIC IRQ0 timer path | QEMU-verified; legacy PIC, single-core test path |
 | Two-task ring-0 context switching | QEMU-verified in GitHub Actions run #46; both tasks ran, boot context resumed and page-fault test passed |
 | SMP, userspace and process isolation | Not implemented |
-| Native model loading/inference | Not implemented |
+| GGUF metadata/tensor-directory inspection | Host-side bounded parser and malformed-file tests; no model execution |\n| Native model loading/inference | Not implemented |
 | Agent capability enforcement/runtime | Not implemented |
 | AgentSON trace integration/replay | Design only |
 | CI | Documentation hygiene, freestanding kernel build, host memory tests and QEMU smoke test |
