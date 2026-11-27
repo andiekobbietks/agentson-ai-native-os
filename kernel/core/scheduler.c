@@ -80,7 +80,21 @@ struct exception_frame *scheduler_on_tick(struct exception_frame *frame)
 
     ++tick_count;
 
-    return next_frame;
+    if (current_context == 0u) {
+        boot_frame = frame;
+        current_context = 1u;
+        return tasks[0].saved_frame;
+    }
+
+    if (current_context == 1u) {
+        tasks[0].saved_frame = frame;
+        current_context = 2u;
+        return tasks[1].saved_frame;
+    }
+
+    tasks[1].saved_frame = frame;
+    current_context = 0u;
+    return boot_frame;
 }
 
 uint64_t scheduler_ticks(void)
