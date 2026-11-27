@@ -1,0 +1,14 @@
+build/
+dist/
+*.iso
+*.elf
+*.elf64
+*.bin
+*.img
+*.qcow2
+*.log
+.env
+.idea/
+.vscode/
+__pycache__/
+.pytest_cache/
