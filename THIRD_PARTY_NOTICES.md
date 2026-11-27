@@ -12,7 +12,7 @@ These are research references only. If code is later adapted, retain applicable 
 ## GGUF format specification reference
 
 - **Project:** ggml
-- **Reference:** https://github.com/ggml-org/ggml/blob/bb877c0c51f38c52ee2d5e41d58e3d0c20f3fed4/docs/gguf.md
+- **References:** [GGUF specification](https://github.com/ggml-org/ggml/blob/bb877c0c51f38c52ee2d5e41d58e3d0c20f3fed4/docs/gguf.md) and [GGML tensor type enum](https://github.com/ggml-org/ggml/blob/bb877c0c51f38c52ee2d5e41d58e3d0c20f3fed4/include/ggml.h)
 - **Pinned revision:** bb877c0c51f38c52ee2d5e41d58e3d0c20f3fed4
 - **Use:** format specification reference for the independently authored host-side GGUF inspector.
 - **Source code copied:** none.
