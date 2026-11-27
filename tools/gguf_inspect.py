@@ -42,20 +42,14 @@ META_TYPES = {
     12: ("float64", 8, "d"),
 }
 
-# GGML type code -> (name, elements per block, bytes per block).
-# Unknown-but-valid codes remain visible in the report, but their complete
-# data extents cannot be verified without a matching ggml block definition.
-TENSOR_LAYOUTS = {
-    0: ("F32", 1, 4),
-    1: ("F16", 1, 2),
-    2: ("Q4_0", 32, 18),
-    3: ("Q4_1", 32, 20),
-    6: ("Q5_0", 32, 22),
-    7: ("Q5_1", 32, 24),
-    8: ("Q8_0", 32, 34),
-    9: ("Q8_1", 32, 40),
-}
-KNOWN_GGML_TYPE_CODES = set(range(44)) - {4, 5, 31, 32, 33, 36, 37, 38} # removed by the pinned GGML revision)
+# Share one pinned type/layout table between the inspector and decoder.
+if __package__ in (None, ""):
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from runtime.gguf_types import (
+    GGML_TYPE_LAYOUTS as TENSOR_LAYOUTS,
+    KNOWN_GGML_TYPE_CODES,
+)
+
 KEY_PATTERN = re.compile(r"^[a-z][a-z0-9_]*(?:\.[a-z][a-z0-9_]*)*$")
 
 
