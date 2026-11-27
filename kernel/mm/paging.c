@@ -79,7 +79,7 @@ static bool split_huge_page(uint64_t *entry)
         return false;
 
     for (uint32_t i = 0u; i < ENTRY_COUNT; ++i) {
-        table[i] = huge_base + (uint64_t)i * PAGING_PAGE_SIZE |
+        table[i] = (huge_base + (uint64_t)i * PAGING_PAGE_SIZE) |
                    inherited_flags;
     }
 
