@@ -77,7 +77,7 @@ align 8
 gdt64:
     dq 0
     dq 0x00AF9A000000FFFF
-    dq 0x00AF92000000FFFF
+    dq 0x00CF92000000FFFF
 .pointer:
     dw $ - gdt64 - 1
     dd gdt64
