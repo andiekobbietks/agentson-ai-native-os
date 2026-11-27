@@ -17,6 +17,7 @@
 | Multiboot2 memory map | Validated tags, entry bounds and memory regions | Implemented; unit/QEMU validation in this PR |
 | Memory map | Parsed ranges and bounds checks | Not implemented |
 | Physical-frame allocator | Reserved-range handling, alignment, allocation/free tests | Passed in GitHub Actions run #13 |
+| Page-table manager | Create tables, split huge page, map/write/translate/unmap | Implemented; QEMU validation pending in this PR |
 | Inference correctness | Fixed prompts and token output | Not implemented |
 | Agent permissions | Positive and negative capability tests | Not implemented |
 | AgentSON trace | Schema validation and replay | Not implemented |
