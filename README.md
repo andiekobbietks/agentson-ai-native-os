@@ -2,7 +2,7 @@
 
 An independently developed research and engineering project exploring an AI-native, x86-64 bare-metal platform, beginning with a reproducible QEMU target.
 
-**Current maturity:** the independent x86-64 kernel boot, Multiboot2 memory-map parsing, bounded physical-frame allocator, 4 KiB page-table operations, IDT exception diagnostics and a controlled PIT/PIC IRQ0 timer path have been exercised in QEMU through GitHub Actions. The two-task ring-0 preemptive context-switch experiment is QEMU-verified in GitHub Actions run #57. A host-side GGUF metadata/tensor-directory inspector, deny-by-default capability policy core and one read-only workspace-file executor are implemented. Native model inference and an isolated/general-purpose agent runtime are not implemented.
+**Current maturity:** the independent x86-64 kernel boot, Multiboot2 memory-map parsing, bounded physical-frame allocator, 4 KiB page-table operations, IDT exception diagnostics and a controlled PIT/PIC IRQ0 timer path have been exercised in QEMU through GitHub Actions. The two-task ring-0 preemptive context-switch experiment is QEMU-verified in GitHub Actions run #57. A host-side GGUF metadata/tensor-directory inspector, deny-by-default capability policy core and one read-only workspace-file executor (8 MiB maximum response) are implemented. Native model inference and an isolated/general-purpose agent runtime are not implemented.
 
 ## How the project began
 
