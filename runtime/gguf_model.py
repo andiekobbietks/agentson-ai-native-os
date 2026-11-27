@@ -44,6 +44,7 @@ class GGUFModel:
             raise GGUFModelError("model is already open")
 
         stream = open(self._path, "rb")
+        mapped = None
         try:
             before = os.fstat(stream.fileno())
             info = inspect_gguf_stream(stream)
@@ -56,16 +57,18 @@ class GGUFModel:
             mapped = mmap.mmap(stream.fileno(), 0, access=mmap.ACCESS_READ)
             after_map = os.fstat(stream.fileno())
             if _stat_key(after_parse) != _stat_key(after_map):
-                mapped.close()
                 raise GGUFModelError("model file changed while being mapped")
 
+            tensors = {tensor["name"]: tensor for tensor in info["tensors"]}
             self._file = stream
             self._map = mapped
             self._info = info
             self._stat = _stat_key(after_map)
-            self._tensors = {tensor["name"]: tensor for tensor in info["tensors"]}
+            self._tensors = tensors
             return self
         except Exception:
+            if mapped is not None:
+                mapped.close()
             stream.close()
             raise
 
