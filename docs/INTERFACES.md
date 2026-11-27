@@ -7,7 +7,9 @@
 | Bootloader -> kernel | Boot info, memory map, modules | Validated pointer/length structure |
 | Kernel -> user runtime | Process, memory, scheduling, IPC | Narrow syscalls/capabilities |
 | Inference runtime -> model store | Read-only model and tokenizer | Versioned file format |
-| Host policy core -> executor | Exact-scope authorization decision, request ID and output reservation | Executor must independently canonicalise resources and enforce OS isolation |\n| Workspace reader -> filesystem | Read one regular file below configured root using descriptor-relative no-follow opens | Read-only, exact-path, bounded output; no writes or directory listing |\n| Agent runtime -> tools | Typed requests and policy decisions | Allowlisted IPC/RPC |
+| Host policy core -> executor | Exact-scope authorization decision, request ID and output reservation | Executor must independently canonicalise resources and enforce OS isolation |
+| Workspace reader -> filesystem | Read one regular file below configured root using descriptor-relative no-follow opens | Read-only, exact-path, bounded output; no writes or directory listing |
+| Agent runtime -> tools | Typed requests and policy decisions | Allowlisted IPC/RPC |
 | Runtime -> AgentSON | Execution lifecycle events | Versioned event schema; adapter deferred pending v1.2 contract reconciliation |
 | Platform -> OIDL | Hardware capability/deployment description | Versioned declarative descriptor |
 | Guest -> ivshmem model region | Read-only shared model bytes | Validated PCI BAR and bounded offsets |
