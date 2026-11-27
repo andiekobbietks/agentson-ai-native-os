@@ -18,7 +18,9 @@ EXPECTED_MARKERS = (
     "FRAME_ALLOC: valid",
     "PAGING: valid",
     "IDT: valid",
-    "BOOT_OK: agentson-x86_64-idt-exception",
+    "TIMER: valid",
+    "TIMER_TICKS: ",
+    "BOOT_OK: agentson-x86_64-timer-idt-exception",
     "EXCEPTION: page_fault",
     "EXCEPTION_TEST: page_fault_confirmed",
 )

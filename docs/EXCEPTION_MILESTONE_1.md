@@ -20,7 +20,7 @@ make test
 
 ## Deliberate limitations
 
-This is exception diagnostics, not a complete interrupt subsystem. Maskable interrupts remain disabled. There is no PIC/APIC routing, timer, scheduler, TSS, IST stack, double-fault recovery, syscall gate, privilege transition or ring-3 support. Do not run untrusted code in this kernel.
+This is exception diagnostics, not a complete interrupt subsystem. Maskable interrupts remain disabled in the exception-only milestone. A separate controlled timer milestone temporarily enables IRQ0 and masks it again after the test. There is no PIC/APIC routing, timer, scheduler, TSS, IST stack, double-fault recovery, syscall gate, privilege transition or ring-3 support. Do not run untrusted code in this kernel.
 
 ## Next
 

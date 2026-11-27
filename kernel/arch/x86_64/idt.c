@@ -20,6 +20,7 @@ struct idt_register {
 
 static struct idt_gate idt[256] __attribute__((aligned(16)));
 extern void (*isr_stub_table[32])(void);
+extern void irq0_stub(void);
 
 static void set_gate(uint8_t vector, uintptr_t handler)
 {
@@ -46,6 +47,7 @@ void idt_init(void)
 
     for (uint8_t vector = 0u; vector < 32u; ++vector)
         set_gate(vector, (uintptr_t)isr_stub_table[vector]);
+    set_gate(32u, (uintptr_t)irq0_stub);
 
     const struct idt_register idtr = {
         .limit = (uint16_t)(sizeof(idt) - 1u),
