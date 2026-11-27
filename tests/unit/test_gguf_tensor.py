@@ -80,7 +80,7 @@ class GGUFDequantizationTests(unittest.TestCase):
             dequantize_tensor(block, 3)
 
     def test_truncated_quantized_block_rejected(self):
-        with self.assertRaisesRegex(TensorDecodeError, "whole number of blocks"):
+        with self.assertRaisesRegex(TensorDecodeError, "payload is truncated"):
             dequantize_tensor(bytes(17), 2)
 
     def test_unsupported_quantized_type_rejected(self):
