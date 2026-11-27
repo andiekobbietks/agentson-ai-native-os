@@ -179,6 +179,7 @@ class PolicyEngine:
             self._approvals[approval.approval_id] = approval
 
         self._revoked: set[str] = set()
+        self._violated_sessions: set[str] = set()
         self._used_approvals: set[str] = set()
         self._seen_requests: set[str] = set()
         self._grant_calls: dict[str, int] = {}
@@ -252,6 +253,8 @@ class PolicyEngine:
             state = self._states.get(request.session_id)
             if budget is None or state is None:
                 return self._record(request, now_ms, False, "no_session_budget")
+            if request.session_id in self._violated_sessions:
+                return self._record(request, now_ms, False, "session_policy_violation")
             if now_ms >= budget.deadline_ms:
                 return self._record(request, now_ms, False, "session_deadline_exceeded")
             if state.actions_used >= budget.max_actions:
@@ -338,6 +341,7 @@ class PolicyEngine:
             budget = self._budgets[session_id]
             if actual_output_bytes > reserved:
                 state.output_consumed = budget.max_output_bytes
+                self._violated_sessions.add(session_id)
                 self._audit.append(AuditRecord(
                     timestamp_ms=now_ms,
                     request_id=request_id,
