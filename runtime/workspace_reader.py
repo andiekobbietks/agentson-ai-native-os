@@ -13,6 +13,10 @@ import stat
 from .agent_policy import PolicyEngine, ToolRequest
 
 
+MAX_WORKSPACE_READ_BYTES = 8 * 1024 * 1024
+MAX_PATH_COMPONENTS = 128
+
+
 @dataclass(frozen=True)
 class ExecutionResult:
     allowed: bool
@@ -57,6 +61,8 @@ class WorkspaceReadExecutor:
         ):
             raise ValueError("invalid relative workspace path")
         components = relative_path.split("/")
+        if len(components) > MAX_PATH_COMPONENTS:
+            raise ValueError("workspace path has too many components")
         if any(part in ("", ".", "..") or ":" in part for part in components):
             raise ValueError("invalid relative workspace path")
         return components
@@ -115,6 +121,8 @@ class WorkspaceReadExecutor:
         not from an untrusted tool payload.
         """
         if type(now_ms) is not int or now_ms < 0:
+            return ExecutionResult(False, "invalid_request_or_resource_path", request_id)
+        if type(output_limit_bytes) is not int or not 0 <= output_limit_bytes <= MAX_WORKSPACE_READ_BYTES:
             return ExecutionResult(False, "invalid_request_or_resource_path", request_id)
         if completed_at_ms is not None and (
             type(completed_at_ms) is not int or completed_at_ms < now_ms
