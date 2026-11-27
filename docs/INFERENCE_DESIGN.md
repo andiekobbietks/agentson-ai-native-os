@@ -51,7 +51,7 @@ The decoder rejects truncated blocks, unsupported type codes and non-finite scal
 
 ## File-backed tensor access
 
-\`runtime/gguf_model.py\` opens one GGUF file, inspects it through the same seekable file handle, and maps it read-only. It exposes tensor descriptors, a streaming \`iter_tensor\` iterator and a bounded \`dequantize_tensor\` materializer. Tensors without a fully validated extent are refused rather than guessed. The iterator holds a memory view until exhausted or closed; close the iterator before closing the model.
+`runtime/gguf_model.py` opens one GGUF file, inspects it through the same seekable file handle, and maps it read-only. It exposes tensor descriptors, a streaming `iter_tensor` iterator and a bounded `dequantize_tensor` materializer. Tensors without a fully validated extent are refused rather than guessed. The iterator holds a memory view until exhausted or closed; close the iterator before closing the model.
 
 The reader checks file identity, size and timestamps before and after inspection/decoding. The model file must remain immutable while mapped. Concurrent truncation can invalidate a mapping and is outside the reader's guarantee. This is file-backed tensor access, not a model executor, sandbox, signature verifier or inference engine.
 
