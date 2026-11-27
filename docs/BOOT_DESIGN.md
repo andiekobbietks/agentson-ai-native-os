@@ -1,9 +1,9 @@
 # Boot Design
 
-**Status:** Proposed; no boot code exists yet.
+**Status:** Initial implementation added in PR #3; QEMU/CI validation pending.
 
 ## First target
-x86-64 guest under QEMU, using a Multiboot-compatible loader for the initial prototype. The exact boot protocol and loader version must be pinned in an ADR before implementation.
+x86-64 guest under QEMU, using GRUB with the Multiboot2 protocol for the initial prototype. The protocol choice is recorded in ADR 0010; the GRUB package version is supplied by the build environment and must be captured in successful CI evidence.
 
 ## Boot phases
 1. Firmware/virtual machine initialises the platform.
@@ -23,6 +23,12 @@ x86-64 guest under QEMU, using a Multiboot-compatible loader for the initial pro
 - Do not assume physical addresses are identity mapped unless the page tables explicitly establish it.
 - Validate all bootloader-provided pointers and lengths.
 - Keep a serial-only diagnostic path independent of VGA.
+
+## Current implementation boundary
+
+The initial entry stub establishes a 16 KiB stack, maps the first 1 GiB with 2 MiB pages, enables PAE and long mode, and transfers control to a freestanding x86-64 C kernel. The kernel initialises COM1, validates the Multiboot2 magic and bounded information structure, emits a success marker and exits through QEMU's test-only debug-exit device. See [boot milestone 1](BOOT_MILESTONE_1.md).
+
+The implementation does not yet parse the memory map, install an IDT, enable interrupts, or provide an allocator. The current identity map is deliberately temporary and is not a production memory-protection policy.
 
 ## Acceptance criteria
 A first boot milestone requires a reproducible image, QEMU command, captured serial output, exit/timeout handling and a test that checks the expected boot marker. It does not require inference.
