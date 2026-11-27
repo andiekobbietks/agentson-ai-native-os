@@ -2,7 +2,7 @@
 
 An independently developed research and engineering project exploring an AI-native, x86-64 bare-metal platform, beginning with a reproducible QEMU target.
 
-**Current maturity:** research scaffold and architecture baseline. This repository does not yet contain an independently implemented, bootable kernel.
+**Current maturity:** first independent x86-64 boot implementation added. The GRUB Multiboot2 kernel, long-mode transition, serial diagnostics and QEMU smoke test are implemented; automated CI validation is pending.
 
 ## How the project began
 
@@ -69,8 +69,8 @@ Both repositories are reported as MIT-licensed. Before adapting any file, verify
 ## Roadmap
 
 1. **Research baseline:** review pinned upstream build instructions and record a reproducible reference environment.
-2. **Boot milestone:** implement a minimal independent x86-64 QEMU boot path and serial smoke test.
-3. **Kernel foundations:** memory map, allocator, exceptions and interrupts.
+2. **Boot milestone:** implemented initial GRUB Multiboot2 x86-64 entry, long-mode transition, serial diagnostics and QEMU smoke-test harness; awaiting CI execution evidence.
+3. **Kernel foundations:** parse Multiboot2 memory map, reserve boot allocations, implement a physical-frame allocator, then exceptions and interrupts.
 4. **Concurrency and devices:** SMP correctness and narrowly scoped device support.
 5. **Reference inference:** model-format validation and host-side inference comparison.
 6. **Agent execution:** isolated runtime, capability enforcement and resource limits.
@@ -87,12 +87,12 @@ Each milestone is to be delivered through one or more focused pull requests. A d
 | Reference revisions pinned | Yes |
 | Architecture decisions recorded | Initial set; see ADR index |
 | Upstream build reproduced in this project | Not yet |
-| Independent kernel implementation | Not yet |
-| QEMU boot test | Not yet |
+| Independent kernel implementation | Initial x86-64 boot kernel added; CI validation pending |
+| QEMU boot test | Harness added; first automated run pending |
 | Inference implementation | Not yet |
 | Agent runtime enforcement | Not yet |
 | AgentSON integration | Design only |
-| CI | Documentation/metadata hygiene only; no kernel build yet |
+| CI | Documentation hygiene plus new kernel build/QEMU boot workflow; first run pending |
 
 ## Scope and safety
 
