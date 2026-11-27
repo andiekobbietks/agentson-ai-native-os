@@ -2,7 +2,7 @@
 
 An independently developed research and engineering project exploring an AI-native, x86-64 bare-metal platform, beginning with a reproducible QEMU target.
 
-**Current maturity:** independent x86-64 kernel boot is verified in QEMU. Multiboot2 memory-map parsing and a bounded physical-frame allocator are QEMU-verified; 4 KiB page-table mapping, unmapping and translation are QEMU-verified in GitHub Actions run #22; IDT and exception diagnostics are QEMU-verified in GitHub Actions run #29; a controlled PIT/PIC timer interrupt test passed in GitHub Actions run #34.
+**Current maturity:** the independent x86-64 kernel boot, Multiboot2 memory-map parsing, bounded physical-frame allocator, 4 KiB page-table operations, IDT exception diagnostics and a controlled PIT/PIC IRQ0 timer path have been exercised in QEMU through GitHub Actions. The two-task ring-0 preemptive context-switch experiment is in a follow-on implementation branch and remains pending its own CI validation. Native model inference and an agent runtime are not implemented.
 
 ## How the project began
 
@@ -68,12 +68,12 @@ Both repositories are reported as MIT-licensed. Before adapting any file, verify
 
 ## Roadmap
 
-1. **Research baseline:** review pinned upstream build instructions and record a reproducible reference environment.
-2. **Boot milestone:** implemented and QEMU-verified GRUB Multiboot2 x86-64 entry, long-mode transition and serial diagnostics.
-3. **Kernel foundations:** Multiboot2 memory-map parsing and 4 KiB physical-frame allocator verified; initial page-table manager verified in QEMU; IDT and exception diagnostics are under validation, followed by controlled interrupt handling.
-4. **Concurrency and devices:** SMP correctness and narrowly scoped device support.
-5. **Reference inference:** model-format validation and host-side inference comparison.
-6. **Agent execution:** isolated runtime, capability enforcement and resource limits.
+1. **Research baseline:** reproduce and record the pinned upstream reference build in a separate, isolated checkout.
+2. **Boot and kernel foundations:** independent GRUB Multiboot2 x86-64 boot, memory-map parsing, bounded frame allocation, 4 KiB page mapping, IDT exception diagnostics and a controlled legacy timer interrupt path.
+3. **Scheduling:** validate the fixed two-task ring-0 context-switch experiment; then design task lifecycle, stack protection and interrupt/locking invariants before broader scheduling.
+4. **Concurrency and devices:** SMP correctness, APIC-based interrupt routing and narrowly scoped device support.
+5. **Reference inference:** model-format validation and a reproducible host-side inference baseline before considering any privileged integration.
+6. **Agent execution:** isolated runtime, explicit capabilities, resource quotas and denied-operation tests.
 7. **Interoperability:** AgentSON, OIDL and JITLLM adapters where their contracts are defined and justified.
 8. **Hardening and evaluation:** fault injection, reproducibility, security and performance evaluation.
 
@@ -83,20 +83,24 @@ Each milestone is to be delivered through one or more focused pull requests. A d
 
 | Capability | Status |
 |---|---|
-| Research and architecture documentation | Present |
-| Reference revisions pinned | Yes |
-| Architecture decisions recorded | Initial set; see ADR index |
-| Upstream build reproduced in this project | Not yet |
-| Independent kernel implementation | Initial x86-64 kernel boots in QEMU; memory-map parser and physical-frame allocator verified in QEMU |
-| QEMU boot and memory tests | Passed in GitHub Actions runs #11 and #13 |
-| Inference implementation | Not yet |
-| Agent runtime enforcement | Not yet |
-| AgentSON integration | Design only |
-| CI | Documentation hygiene, kernel build, QEMU boot and memory unit tests |
+| Research, architecture and engineering governance | Present on `main` |
+| Reference revisions pinned | Yes; upstream build not yet reproduced |
+| Independent x86-64 boot | QEMU-verified |
+| Multiboot2 memory-map parser | Unit and QEMU-verified |
+| Bounded physical-frame allocator | Unit and QEMU-verified; limited to first 1 GiB |
+| 4 KiB page-table map/unmap/translate | QEMU-verified; single-core bootstrap only |
+| IDT and expected page-fault diagnostics | QEMU-verified |
+| PIT/PIC IRQ0 timer path | QEMU-verified; legacy PIC, single-core test path |
+| Two-task ring-0 context switching | Implementation branch; CI validation pending |
+| SMP, userspace and process isolation | Not implemented |
+| Native model loading/inference | Not implemented |
+| Agent capability enforcement/runtime | Not implemented |
+| AgentSON trace integration/replay | Design only |
+| CI | Documentation hygiene, freestanding kernel build, host memory tests and QEMU smoke test |
 
 ## Scope and safety
 
-This is experimental operating-system research, not a production operating system or a hardened boundary against a malicious hypervisor, firmware or physical attacker. Use disposable virtual machines. Do not pass through host disks or expose unrestricted devices. Do not claim performance, security or correctness without reproducible evidence.
+This is experimental operating-system research, not a production operating system or a hardened boundary against a malicious hypervisor, firmware or physical attacker. Current task execution is privileged ring 0 and must not be used for untrusted code. Use disposable virtual machines. Do not pass through host disks or expose unrestricted devices. Do not claim performance, security or correctness without reproducible evidence.
 
 ## Licence
 
