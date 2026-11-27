@@ -25,7 +25,7 @@
 | Model loading/inference | Validated model/tokenizer fixtures, deterministic fixed-prompt output and reference comparison | Not implemented |
 | GGUF model inspection | Header/version, metadata, arrays, tensor directory, alignment, bounds and malformed-file tests | Passed in model-format workflow #5 (17 tests) |
 | Agent policy core | Exact grants, expiry/revocation, request-bound approvals, budgets, replay protection, concurrent calls and output-violation lockout | Passed in agent-policy workflow #1 (20 tests) |
-| Read-only workspace executor | Exact grant, path traversal, symlink rejection, regular-file checks, output bounds and budget settlement | Pending workspace-read workflow for this PR |
+| Read-only workspace executor | Exact grant, path traversal, symlink rejection, regular-file checks, 8 MiB hard output cap, path-depth bound and budget settlement | Pending workspace-read workflow for this PR |
 | Isolated agent execution | Process/VM isolation, syscall policy and OS-enforced quotas | Not implemented |
 | AgentSON trace | Schema validation, ordering, integrity, replay and failure tests | Not implemented |
 
