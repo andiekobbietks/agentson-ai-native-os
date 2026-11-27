@@ -156,9 +156,14 @@ class PolicyEngine:
         approvals: list[Approval] | tuple[Approval, ...] = (),
     ):
         self._grants: dict[str, CapabilityGrant] = {}
+        grant_scopes = set()
         for grant in grants:
             if grant.grant_id in self._grants:
                 raise ValueError(f"duplicate grant_id: {grant.grant_id}")
+            scope = (grant.session_id, grant.agent_id, grant.capability, grant.resource)
+            if scope in grant_scopes:
+                raise ValueError("duplicate capability grant scope")
+            grant_scopes.add(scope)
             self._grants[grant.grant_id] = grant
 
         self._budgets = dict(budgets)
