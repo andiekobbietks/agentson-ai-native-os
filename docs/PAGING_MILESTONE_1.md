@@ -1,6 +1,6 @@
 # Paging milestone 1: 4 KiB page-table management
 
-**Implementation status:** Initial manager and QEMU integration added; automated validation pending.
+**Implementation status:** Passed in GitHub Actions run #19, including page-table creation, huge-page splitting, alias writes, translation and unmapping.
 
 ## Implemented
 
