@@ -16,6 +16,8 @@ MAX_METADATA = 100_000
 MAX_STRING_BYTES = 1_048_576
 MAX_ARRAY_ELEMENTS = 2_000_000
 MAX_ARRAY_DEPTH = 8
+MAX_RETAINED_ARRAY_ELEMENTS = 250_000
+MAX_RETAINED_ARRAY_BYTES = 8 * 1024 * 1024
 MAX_DIMENSIONS = 4
 MAX_TENSOR_ELEMENTS = 1 << 40
 MAX_ALIGNMENT = 4096
@@ -100,13 +102,21 @@ def _align_up(value: int, alignment: int) -> int:
     return (value + alignment - 1) & ~(alignment - 1)
 
 
-def _metadata_value(reader: Reader, value_type: int, depth: int = 0):
+def _metadata_value(
+    reader: Reader,
+    value_type: int,
+    depth: int = 0,
+    *,
+    retain_array: bool = False,
+    max_retained_array_elements: int = MAX_RETAINED_ARRAY_ELEMENTS,
+    max_retained_array_bytes: int = MAX_RETAINED_ARRAY_BYTES,
+):
     if depth > MAX_ARRAY_DEPTH:
         raise GGUFError("metadata array nesting exceeds configured limit")
     spec = META_TYPES.get(value_type)
     if spec is None:
         raise GGUFError(f"unknown metadata value type: {value_type}")
-    name, _, fmt = spec
+    _, _, fmt = spec
     if value_type == 8:
         return reader.string()
     if value_type == 9:
@@ -116,6 +126,23 @@ def _metadata_value(reader: Reader, value_type: int, depth: int = 0):
         length = reader.u64()
         if length > MAX_ARRAY_ELEMENTS:
             raise GGUFError("metadata array exceeds configured element limit")
+        if retain_array:
+            if element_type == 9:
+                raise GGUFError("nested metadata arrays cannot be retained")
+            if length > max_retained_array_elements:
+                raise GGUFError("retained metadata array exceeds configured element limit")
+            values = []
+            array_start = reader.tell()
+            for _ in range(length):
+                values.append(_metadata_value(reader, element_type, depth + 1))
+                if reader.tell() - array_start > max_retained_array_bytes:
+                    raise GGUFError("retained metadata array exceeds configured byte limit")
+            return {
+                "kind": "array",
+                "element_type": META_TYPES[element_type][0],
+                "length": length,
+                "values": values,
+            }
         for _ in range(length):
             _metadata_value(reader, element_type, depth + 1)
         return {
@@ -131,7 +158,13 @@ def _metadata_value(reader: Reader, value_type: int, depth: int = 0):
     return reader.unpack("<" + fmt)
 
 
-def _read_metadata(reader: Reader, count: int) -> dict:
+def _read_metadata(
+    reader: Reader,
+    count: int,
+    retain_metadata_keys: frozenset[str],
+    max_retained_array_elements: int,
+    max_retained_array_bytes: int,
+) -> dict:
     metadata = {}
     for _ in range(count):
         key = reader.string(maximum=65535)
@@ -146,7 +179,13 @@ def _read_metadata(reader: Reader, count: int) -> dict:
         value_type = reader.u32()
         metadata[key] = {
             "type": META_TYPES.get(value_type, ("unknown",))[0],
-            "value": _metadata_value(reader, value_type),
+            "value": _metadata_value(
+                reader,
+                value_type,
+                retain_array=key in retain_metadata_keys,
+                max_retained_array_elements=max_retained_array_elements,
+                max_retained_array_bytes=max_retained_array_bytes,
+            ),
         }
     return metadata
 
@@ -191,7 +230,13 @@ def _read_tensors(reader: Reader, count: int) -> list[dict]:
     return tensors
 
 
-def _inspect(reader: Reader) -> dict:
+def _inspect(
+    reader: Reader,
+    *,
+    retain_metadata_keys: frozenset[str] = frozenset(),
+    max_retained_array_elements: int = MAX_RETAINED_ARRAY_ELEMENTS,
+    max_retained_array_bytes: int = MAX_RETAINED_ARRAY_BYTES,
+) -> dict:
     if reader.read_exact(4) != b"GGUF":
         raise GGUFError("invalid GGUF magic")
     version_bytes = reader.read_exact(4)
@@ -213,7 +258,13 @@ def _inspect(reader: Reader) -> dict:
     if metadata_count > reader.remaining() // 16 + 1:
         raise GGUFError("metadata count is impossible for remaining file size")
 
-    metadata = _read_metadata(reader, metadata_count)
+    metadata = _read_metadata(
+        reader,
+        metadata_count,
+        retain_metadata_keys,
+        max_retained_array_elements,
+        max_retained_array_bytes,
+    )
     tensors = _read_tensors(reader, tensor_count)
 
     alignment_entry = metadata.get("general.alignment")
@@ -273,30 +324,83 @@ def _inspect(reader: Reader) -> dict:
     }
 
 
-def inspect_gguf_stream(stream: BinaryIO) -> dict:
-    """Inspect a seekable binary stream without closing or repositioning it."""
+def _normalise_retained_keys(keys) -> frozenset[str]:
+    if keys is None:
+        return frozenset()
+    try:
+        retained = frozenset(keys)
+    except TypeError as exc:
+        raise GGUFError("retained metadata keys must be an iterable of strings") from exc
+    if any(not isinstance(key, str) or not KEY_PATTERN.fullmatch(key) for key in retained):
+        raise GGUFError("retained metadata keys must be valid GGUF metadata names")
+    return retained
+
+
+def _validate_retention_limits(max_elements: int, max_bytes: int) -> None:
+    if type(max_elements) is not int or max_elements < 0:
+        raise GGUFError("retained metadata element limit must be a non-negative integer")
+    if type(max_bytes) is not int or max_bytes < 0:
+        raise GGUFError("retained metadata byte limit must be a non-negative integer")
+
+
+def inspect_gguf_stream(
+    stream: BinaryIO,
+    *,
+    retain_metadata_keys=(),
+    max_retained_array_elements: int = MAX_RETAINED_ARRAY_ELEMENTS,
+    max_retained_array_bytes: int = MAX_RETAINED_ARRAY_BYTES,
+) -> dict:
+    """Inspect a seekable stream, optionally retaining selected metadata arrays."""
+    retained = _normalise_retained_keys(retain_metadata_keys)
+    _validate_retention_limits(max_retained_array_elements, max_retained_array_bytes)
     try:
         original_position = stream.tell()
         stream.seek(0)
     except (AttributeError, OSError) as exc:
         raise GGUFError("GGUF input stream must be seekable") from exc
     try:
-        return _inspect(Reader(stream))
+        return _inspect(
+            Reader(stream),
+            retain_metadata_keys=retained,
+            max_retained_array_elements=max_retained_array_elements,
+            max_retained_array_bytes=max_retained_array_bytes,
+        )
     finally:
         stream.seek(original_position)
 
 
-def inspect_gguf(path: str | os.PathLike[str]) -> dict:
-    """Inspect a GGUF file without loading its tensor payloads into memory."""
-    try:
-        with open(path, "rb") as stream:
-            return inspect_gguf_stream(stream)
-    except OSError:
-        raise
+def inspect_gguf(
+    path: str | os.PathLike[str],
+    *,
+    retain_metadata_keys=(),
+    max_retained_array_elements: int = MAX_RETAINED_ARRAY_ELEMENTS,
+    max_retained_array_bytes: int = MAX_RETAINED_ARRAY_BYTES,
+) -> dict:
+    """Inspect a GGUF file without loading tensor payloads into memory."""
+    with open(path, "rb") as stream:
+        return inspect_gguf_stream(
+            stream,
+            retain_metadata_keys=retain_metadata_keys,
+            max_retained_array_elements=max_retained_array_elements,
+            max_retained_array_bytes=max_retained_array_bytes,
+        )
 
 
-def inspect_gguf_bytes(data: bytes) -> dict:
+def inspect_gguf_bytes(
+    data: bytes,
+    *,
+    retain_metadata_keys=(),
+    max_retained_array_elements: int = MAX_RETAINED_ARRAY_ELEMENTS,
+    max_retained_array_bytes: int = MAX_RETAINED_ARRAY_BYTES,
+) -> dict:
     """Inspect in-memory bytes; primarily useful for deterministic tests."""
-    return _inspect(Reader(io.BytesIO(data)))
+    retained = _normalise_retained_keys(retain_metadata_keys)
+    _validate_retention_limits(max_retained_array_elements, max_retained_array_bytes)
+    return _inspect(
+        Reader(io.BytesIO(data)),
+        retain_metadata_keys=retained,
+        max_retained_array_elements=max_retained_array_elements,
+        max_retained_array_bytes=max_retained_array_bytes,
+    )
 
 
