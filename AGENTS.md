@@ -1,7 +1,7 @@
 # Instructions for AI and human contributors
 
 ## Project truth
-This repository is currently a research scaffold. Do not describe a feature as implemented, bootable, secure, deterministic, or benchmarked unless code and reproducible evidence exist in this repository.
+This repository began as a research scaffold and now contains an experimental QEMU-bootable x86-64 kernel with memory-management, exception, timer and two-task ring-0 scheduling prototypes. A host-side, bounds-checked GGUF inspector is present; model execution and the agent runtime remain unimplemented. Native model inference, userspace and an agent runtime are not implemented. Do not describe a feature as implemented, bootable, secure, deterministic, or benchmarked unless code and reproducible evidence exist in this repository.
 
 ## Engineering rules
 - Read the relevant architecture decision records and source register before changing platform choices.

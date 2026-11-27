@@ -9,7 +9,7 @@ QEMU ?= qemu-system-x86_64
 PYTHON ?= python3
 CFLAGS := -m64 -std=c11 -O2 -Wall -Wextra -Werror -ffreestanding -fno-stack-protector -fno-pic -fno-pie -fno-builtin -mno-red-zone -mgeneral-regs-only -Ikernel/include
 LDFLAGS := -m elf_x86_64 -nostdlib -z max-page-size=0x1000 -T kernel/arch/x86_64/linker.ld
-.PHONY: all clean check iso test test-unit toolchain-check
+.PHONY: all clean check iso test test-unit test-model-format toolchain-check
 all: $(KERNEL_ISO)
 $(BUILD_DIR):
 	mkdir -p $@
@@ -50,7 +50,9 @@ iso: $(KERNEL_ISO)
 test-unit: | $(BUILD_DIR)
 	$(CC) -std=c11 -Wall -Wextra -Werror -Ikernel/include kernel/core/multiboot2.c kernel/mm/frame_allocator.c tests/unit/test_memory.c -o $(BUILD_DIR)/test_memory
 	$(BUILD_DIR)/test_memory
-test: $(KERNEL_ISO) test-unit
+test-model-format:
+	$(PYTHON) -m unittest discover -s tests/unit -p 'test_gguf_inspect.py' -v
+test: $(KERNEL_ISO) test-unit test-model-format
 	$(PYTHON) tests/boot/test_qemu_boot.py --qemu $(QEMU) --iso $(KERNEL_ISO)
 toolchain-check:
 	@command -v $(NASM) >/dev/null

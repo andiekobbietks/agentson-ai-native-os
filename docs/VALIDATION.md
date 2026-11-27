@@ -20,10 +20,10 @@
 | Page-table manager | Intermediate table allocation, huge-page split, map/write/translate/unmap | Passed in GitHub Actions run #22 |
 | IDT and exception path | Install vectors 0–31; expected supervisor not-present page fault, CR2 and error code | Passed in GitHub Actions run #29 |
 | PIT timer IRQ | PIC remap, vector 32, PIT ticks, EOI, IRETQ and timer mask | Passed in GitHub Actions; main commit records run #36 |
-| Two-task context switch | Both task counters advance, boot context resumes, timer stops, expected page fault still passes | Passed in GitHub Actions run #46 (QEMU) |
+| Two-task context switch | Both task counters advance, boot context resumes, timer stops, expected page fault still passes | Passed in GitHub Actions run #48 (QEMU) |
 | SMP | AP startup, per-core state, locking and TLB shootdown tests | Not implemented |
 | Model loading/inference | Validated model/tokenizer fixtures, deterministic fixed-prompt output and reference comparison | Not implemented |
-| Agent permissions | Positive and negative capability tests, quotas and fail-closed behaviour | Not implemented |
+| GGUF model inspection | Header/version, metadata, arrays, tensor directory, alignment, bounds and malformed-file tests | Passed in model-format workflow #5 (17 tests) |\n| Agent permissions | Positive and negative capability tests, quotas and fail-closed behaviour | Not implemented |
 | AgentSON trace | Schema validation, ordering, integrity, replay and failure tests | Not implemented |
 
 ## Reproduction

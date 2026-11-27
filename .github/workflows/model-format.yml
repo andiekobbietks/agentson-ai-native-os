@@ -1,0 +1,23 @@
+name: Model format validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  gguf-inspector:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run GGUF parser tests
+        run: python -m unittest discover -s tests/unit -p "test_gguf_inspect.py" -v
