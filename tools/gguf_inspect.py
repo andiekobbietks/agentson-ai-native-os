@@ -55,7 +55,7 @@ TENSOR_LAYOUTS = {
     8: ("Q8_0", 32, 34),
     9: ("Q8_1", 32, 40),
 }
-KNOWN_GGML_TYPE_CODES = set(range(44))
+KNOWN_GGML_TYPE_CODES = set(range(44)) - {4, 5, 31, 32, 33, 36, 37, 38} # removed by the pinned GGML revision)
 KEY_PATTERN = re.compile(r"^[a-z][a-z0-9_]*(?:\.[a-z][a-z0-9_]*)*$")
 
 
