@@ -1,0 +1,36 @@
+name: Repository hygiene
+
+on:
+  push:
+    branches: [main, "chore/**"]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  docs-and-metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Validate required project files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s README.md
+          test -s LICENSE
+          test -s AGENTS.md
+          test -s THIRD_PARTY_NOTICES.md
+          test -s docs/ARCHITECTURE.md
+          test -s docs/THREAT_MODEL.md
+          test -s docs/BOOT_DESIGN.md
+          test -s docs/MEMORY_MODEL.md
+          test -s docs/AGENT_RUNTIME.md
+          test -s docs/INFERENCE_DESIGN.md
+          test -s docs/INTERFACES.md
+          test -s docs/REFERENCE_ENGINEERING.md
+          grep -q "Apache License" LICENSE
+          grep -q "END OF TERMS AND CONDITIONS" LICENSE
+          echo "Repository documentation and licence checks passed."
