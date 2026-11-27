@@ -1,6 +1,6 @@
 # Memory milestone 1: Multiboot2 memory map and physical frames
 
-**Implementation status:** Parser, bounded bitmap allocator, host unit tests and QEMU integration added; CI validation pending.
+**Implementation status:** Passed in GitHub Actions run #13: host unit tests and live QEMU allocation/release check.
 
 ## Implemented
 
