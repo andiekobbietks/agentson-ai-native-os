@@ -105,7 +105,8 @@ Each milestone is to be delivered through one or more focused pull requests. A d
 | Two-task ring-0 context switching | QEMU-verified in GitHub Actions run #75; both tasks ran, boot context resumed and page-fault test passed |
 | SMP, userspace and process isolation | Not implemented |
 | GGUF metadata/tensor-directory inspection | Host-side bounded parser and malformed-file tests; no model execution |
-| GGUF tensor dequantization | Host-side reference decoder for eight tensor types; no matrix multiplication or inference |\n| GGUF file-backed tensor access | Read-only mmap reader with streaming and bounded tensor access; no model execution |
+| GGUF tensor dequantization | Host-side reference decoder for eight tensor types; no matrix multiplication or inference |
+| GGUF file-backed tensor access | Read-only mmap reader with streaming and bounded tensor access; no model execution |
 | Native model loading/inference | Not implemented |
 | Agent capability policy | Host-side exact-scope grants, revocation, approvals and session budgets |
 | Read-only workspace executor | One file-read tool with exact grants, no-follow opens and output limits; no process isolation |
