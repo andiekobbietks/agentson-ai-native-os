@@ -77,6 +77,18 @@ make test-model-format
 
 The inspector, decoder and mmap reader are format-validation/reference utilities, not an inference engine. See [inference design](docs/INFERENCE_DESIGN.md) for supported layouts and limitations.
 
+The file-backed reader maps a validated GGUF file read-only and streams a selected tensor without copying the full model:
+
+```python
+from runtime.gguf_model import GGUFModel
+
+with GGUFModel("model.gguf") as model:
+    for value in model.iter_tensor("token_embd.weight"):
+        process_value(value)
+```
+
+The materializing helper is limited to one million elements by default. Keep model files immutable while mapped, and close any active tensor iterator before closing the model.
+
 ## Roadmap
 
 1. **Research baseline:** reproduce and record the pinned upstream reference build in a separate, isolated checkout.
