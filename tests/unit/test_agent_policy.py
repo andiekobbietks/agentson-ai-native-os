@@ -267,6 +267,18 @@ class AgentPolicyTests(unittest.TestCase):
         self.assertEqual(sum(results), 5)
         self.assertEqual(engine.budget_usage("session-1")["actions_used"], 5)
 
+    def test_duplicate_grant_scope_rejected(self):
+        second = CapabilityGrant(
+            grant_id="grant-2",
+            session_id="session-1",
+            agent_id="agent-1",
+            capability="workspace.read",
+            resource="workspace:/repo",
+            expires_at_ms=3_000,
+        )
+        with self.assertRaisesRegex(ValueError, "duplicate capability grant scope"):
+            PolicyEngine([self.grant, second], {"session-1": self.budget})
+
     def test_duplicate_grant_ids_rejected(self):
         with self.assertRaisesRegex(ValueError, "duplicate grant_id"):
             PolicyEngine([self.grant, self.grant], {"session-1": self.budget})
