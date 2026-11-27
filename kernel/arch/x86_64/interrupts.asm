@@ -1,6 +1,7 @@
 BITS 64
 section .text
 extern exception_dispatch
+extern irq_dispatch
 
 %macro ISR_NO_ERROR 1
 global isr%1
@@ -82,6 +83,59 @@ isr_common:
     cli
     hlt
     jmp .halt
+
+global irq0_stub
+irq0_stub:
+    push qword 0
+    push qword 32
+    jmp irq_common
+
+irq_common:
+    cld
+    push rax
+    push rbx
+    push rcx
+    push rdx
+    push rbp
+    push rsi
+    push rdi
+    push r8
+    push r9
+    push r10
+    push r11
+    push r12
+    push r13
+    push r14
+    push r15
+
+    mov ax, 0x10
+    mov ds, ax
+    mov es, ax
+    mov ss, ax
+
+    mov rdi, rsp
+    mov rbx, rsp
+    and rsp, -16
+    call irq_dispatch
+    mov rsp, rbx
+
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop r11
+    pop r10
+    pop r9
+    pop r8
+    pop rdi
+    pop rsi
+    pop rbp
+    pop rdx
+    pop rcx
+    pop rbx
+    pop rax
+    add rsp, 16
+    iretq
 
 section .rodata
 align 8
