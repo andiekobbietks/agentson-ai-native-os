@@ -51,7 +51,7 @@ test-unit: | $(BUILD_DIR)
 	$(CC) -std=c11 -Wall -Wextra -Werror -Ikernel/include kernel/core/multiboot2.c kernel/mm/frame_allocator.c tests/unit/test_memory.c -o $(BUILD_DIR)/test_memory
 	$(BUILD_DIR)/test_memory
 test-model-format:
-	$(PYTHON) -m unittest discover -s tests/unit -p 'test_gguf_inspect.py' -v
+	$(PYTHON) -m unittest discover -s tests/unit -p 'test_gguf_*.py' -v
 test-agent-policy:
 	$(PYTHON) -m unittest discover -s tests/unit -p 'test_agent_policy.py' -v
 test-workspace-reader:
