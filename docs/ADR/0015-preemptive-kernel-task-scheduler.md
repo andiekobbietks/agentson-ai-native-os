@@ -15,6 +15,7 @@ This is a research milestone. It is not a process model, userspace implementatio
 For the next bootstrap milestone, implement a fixed two-task, ring-0, round-robin context switch by saving the existing interrupt frame on each task's kernel stack and returning the next saved frame from the IRQ dispatcher.
 
 The experiment must:
+- model the complete 64-bit interrupt return frame, including the hardware-saved RSP and SS slots that IRETQ restores in long mode;
 - keep the task count fixed at two;
 - use statically allocated, bounded kernel stacks;
 - switch only on the existing IRQ0 path;
