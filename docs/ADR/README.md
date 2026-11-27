@@ -27,6 +27,7 @@ ADRs are decision records, not implementation tickets. An accepted decision desc
 | [0017](0017-agent-capability-policy-core.md) | Host-side deny-by-default capability policy core | Accepted for host policy prototype |
 | [0018](0018-workspace-read-executor.md) | Read-only workspace executor with descriptor-relative no-follow opens | Accepted for initial host-side tool prototype |
 | [0019](0019-gguf-tensor-dequantization.md) | Host-side GGUF tensor dequantization for selected scalar and block types | Accepted for reference decoder prototype |
+| [0020](0020-gguf-mmap-tensor-reader.md) | Read-only memory-mapped GGUF tensor access | Accepted for host reference reader |
 
 ## When to write an ADR
 
