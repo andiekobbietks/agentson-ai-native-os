@@ -1,6 +1,6 @@
 # ADR 0015: Bootstrap preemptive task switching
 
-- **Status:** Proposed pending QEMU validation
+- **Status:** Accepted for two-task QEMU prototype
 - **Date:** 2026-11-27
 - **Decision owners:** AgentSON project maintainers
 
@@ -45,7 +45,7 @@ The QEMU test must assert:
 - the existing expected supervisor page fault is still diagnosed;
 - QEMU exits with the expected debug-exit status.
 
-The decision remains Proposed until the GitHub Actions run for the implementation PR passes and its serial markers and exit status are inspected. A successful smoke test does not establish SMP safety or production readiness.
+GitHub Actions run #46 passed the QEMU test at commit 81ebc861305c5defa6d70f15537f233303d54b80. The serial output confirmed nine timer ticks, non-zero counters for both tasks, boot-context resumption, and the expected page-fault diagnostic. This validates only the fixed two-task QEMU prototype; it does not establish SMP safety or production readiness.
 
 ## Follow-up
 
