@@ -26,7 +26,7 @@ def main() -> int:
         args.qemu, "-machine", "q35", "-cpu", "max", "-m", "512M",
         "-cdrom", args.iso, "-boot", "d", "-serial", "stdio",
         "-display", "none", "-monitor", "none", "-no-reboot",
-        "-no-shutdown", "-device",
+        "-device",
         "isa-debug-exit,iobase=0xf4,iosize=0x04",
     ]
     try:
