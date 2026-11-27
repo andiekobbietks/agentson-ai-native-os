@@ -2,7 +2,7 @@
 
 An independently developed research and engineering project exploring an AI-native, x86-64 bare-metal platform, beginning with a reproducible QEMU target.
 
-**Current maturity:** first independent x86-64 boot implementation added. The GRUB Multiboot2 kernel, long-mode transition, serial diagnostics and QEMU smoke test are implemented; automated CI validation is pending.
+**Current maturity:** independent x86-64 kernel boot is verified in QEMU. Multiboot2 memory-map parsing and a bounded physical-frame allocator are now implemented and under automated validation.
 
 ## How the project began
 
@@ -69,8 +69,8 @@ Both repositories are reported as MIT-licensed. Before adapting any file, verify
 ## Roadmap
 
 1. **Research baseline:** review pinned upstream build instructions and record a reproducible reference environment.
-2. **Boot milestone:** implemented initial GRUB Multiboot2 x86-64 entry, long-mode transition, serial diagnostics and QEMU smoke-test harness; awaiting CI execution evidence.
-3. **Kernel foundations:** parse Multiboot2 memory map, reserve boot allocations, implement a physical-frame allocator, then exceptions and interrupts.
+2. **Boot milestone:** implemented and QEMU-verified GRUB Multiboot2 x86-64 entry, long-mode transition and serial diagnostics.
+3. **Kernel foundations:** Multiboot2 memory-map parsing and a 4 KiB physical-frame allocator implemented; next add page-table management, IDT, exceptions and interrupts.
 4. **Concurrency and devices:** SMP correctness and narrowly scoped device support.
 5. **Reference inference:** model-format validation and host-side inference comparison.
 6. **Agent execution:** isolated runtime, capability enforcement and resource limits.
@@ -87,12 +87,12 @@ Each milestone is to be delivered through one or more focused pull requests. A d
 | Reference revisions pinned | Yes |
 | Architecture decisions recorded | Initial set; see ADR index |
 | Upstream build reproduced in this project | Not yet |
-| Independent kernel implementation | Initial x86-64 boot kernel added; CI validation pending |
-| QEMU boot test | Harness added; first automated run pending |
+| Independent kernel implementation | Initial x86-64 kernel boots in QEMU; memory-map and allocator work in this PR |
+| QEMU boot test | Passed in GitHub Actions run #11 |
 | Inference implementation | Not yet |
 | Agent runtime enforcement | Not yet |
 | AgentSON integration | Design only |
-| CI | Documentation hygiene plus new kernel build/QEMU boot workflow; first run pending |
+| CI | Documentation hygiene, kernel build, QEMU boot and memory unit tests |
 
 ## Scope and safety
 
