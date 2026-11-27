@@ -66,6 +66,17 @@ Both repositories are reported as MIT-licensed. Before adapting any file, verify
 - [Windows/WSL2 setup](docs/WINDOWS_WSL2.md)
 - [Third-party notices](THIRD_PARTY_NOTICES.md)
 
+## Inspecting a GGUF model file
+
+The host-side inspector reads GGUF v2/v3 little-endian headers and tensor metadata without loading tensor payloads:
+
+```bash
+python3 tools/gguf_inspect.py path/to/model.gguf
+make test-model-format
+```
+
+It is a format-validation utility, not an inference engine. See [inference design](docs/INFERENCE_DESIGN.md) for the supported tensor extent checks and limitations.
+
 ## Roadmap
 
 1. **Research baseline:** reproduce and record the pinned upstream reference build in a separate, isolated checkout.
