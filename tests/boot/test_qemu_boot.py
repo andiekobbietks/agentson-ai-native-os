@@ -17,7 +17,10 @@ EXPECTED_MARKERS = (
     "MULTIBOOT2_MEMORY_MAP: valid",
     "FRAME_ALLOC: valid",
     "PAGING: valid",
-    "BOOT_OK: agentson-x86_64-page-table-manager",
+    "IDT: valid",
+    "BOOT_OK: agentson-x86_64-idt-exception",
+    "EXCEPTION: page_fault",
+    "EXCEPTION_TEST: page_fault_confirmed",
 )
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -48,8 +51,8 @@ def main() -> int:
         print(f"FAIL: missing serial markers: {missing}", file=sys.stderr)
         print(f"QEMU exit status: {result.returncode}", file=sys.stderr)
         return 1
-    if result.returncode != 33:
-        print(f"FAIL: expected debug-exit status 33, got {result.returncode}",
+    if result.returncode != 35:
+        print(f"FAIL: expected exception debug-exit status 35, got {result.returncode}",
               file=sys.stderr)
         return 1
     print("PASS: x86-64 Multiboot2 kernel booted and validated boot info.")

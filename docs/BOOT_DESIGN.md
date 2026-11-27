@@ -1,6 +1,6 @@
 # Boot Design
 
-**Status:** Initial implementation merged and verified by GitHub Actions run #11. Memory-map and allocator follow-on is verified by run #13; 4 KiB page-table manager is verified by run #19.
+**Status:** Initial implementation merged and verified by GitHub Actions run #11. Memory-map and allocator follow-on is verified by run #13; 4 KiB page-table manager is verified by run #22; IDT and controlled page-fault diagnostics are verified by run #27.
 
 ## First target
 x86-64 guest under QEMU, using GRUB with the Multiboot2 protocol for the initial prototype. The protocol choice is recorded in ADR 0010; the GRUB package version is supplied by the build environment and must be captured in successful CI evidence.
