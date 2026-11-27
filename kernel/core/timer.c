@@ -1,6 +1,8 @@
 #include "timer.h"
 #include "idt.h"
 
+#include <stddef.h>
+
 #include <stdint.h>
 
 #define PIC_MASTER_COMMAND 0x20u
