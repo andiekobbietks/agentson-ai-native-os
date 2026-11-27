@@ -15,7 +15,7 @@ $(BUILD_DIR):
 	mkdir -p $@
 $(BUILD_DIR)/boot.o: kernel/arch/x86_64/boot.asm | $(BUILD_DIR)
 	$(NASM) -f elf64 $< -o $@
-$(BUILD_DIR)/kernel.o: kernel/core/kernel.c kernel/include/multiboot2.h kernel/include/frame_allocator.h kernel/include/paging.h kernel/include/idt.h kernel/include/serial.h kernel/include/timer.h | $(BUILD_DIR)
+$(BUILD_DIR)/kernel.o: kernel/core/kernel.c kernel/include/multiboot2.h kernel/include/frame_allocator.h kernel/include/paging.h kernel/include/idt.h kernel/include/serial.h kernel/include/timer.h kernel/include/scheduler.h | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 $(BUILD_DIR)/multiboot2.o: kernel/core/multiboot2.c kernel/include/multiboot2.h | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -31,10 +31,12 @@ $(BUILD_DIR)/exception.o: kernel/arch/x86_64/exception.c kernel/include/idt.h ke
 	$(CC) $(CFLAGS) -c $< -o $@
 $(BUILD_DIR)/interrupts.o: kernel/arch/x86_64/interrupts.asm | $(BUILD_DIR)
 	$(NASM) -f elf64 $< -o $@
-$(BUILD_DIR)/timer.o: kernel/core/timer.c kernel/include/timer.h kernel/include/idt.h | $(BUILD_DIR)
+$(BUILD_DIR)/timer.o: kernel/core/timer.c kernel/include/timer.h kernel/include/idt.h kernel/include/scheduler.h | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
-$(KERNEL_ELF): $(BUILD_DIR)/boot.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/multiboot2.o $(BUILD_DIR)/frame_allocator.o $(BUILD_DIR)/paging.o $(BUILD_DIR)/serial.o $(BUILD_DIR)/idt.o $(BUILD_DIR)/exception.o $(BUILD_DIR)/interrupts.o $(BUILD_DIR)/timer.o kernel/arch/x86_64/linker.ld
-	$(LD) $(LDFLAGS) $(BUILD_DIR)/boot.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/multiboot2.o $(BUILD_DIR)/frame_allocator.o $(BUILD_DIR)/paging.o $(BUILD_DIR)/serial.o $(BUILD_DIR)/idt.o $(BUILD_DIR)/exception.o $(BUILD_DIR)/interrupts.o $(BUILD_DIR)/timer.o -o $@
+$(BUILD_DIR)/scheduler.o: kernel/core/scheduler.c kernel/include/scheduler.h kernel/include/idt.h | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+$(KERNEL_ELF): $(BUILD_DIR)/boot.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/multiboot2.o $(BUILD_DIR)/frame_allocator.o $(BUILD_DIR)/paging.o $(BUILD_DIR)/serial.o $(BUILD_DIR)/idt.o $(BUILD_DIR)/exception.o $(BUILD_DIR)/interrupts.o $(BUILD_DIR)/timer.o $(BUILD_DIR)/scheduler.o kernel/arch/x86_64/linker.ld
+	$(LD) $(LDFLAGS) $(BUILD_DIR)/boot.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/multiboot2.o $(BUILD_DIR)/frame_allocator.o $(BUILD_DIR)/paging.o $(BUILD_DIR)/serial.o $(BUILD_DIR)/idt.o $(BUILD_DIR)/exception.o $(BUILD_DIR)/interrupts.o $(BUILD_DIR)/timer.o $(BUILD_DIR)/scheduler.o -o $@
 	grub-file --is-x86-multiboot2 $@
 $(KERNEL_ISO): $(KERNEL_ELF) grub/grub.cfg
 	mkdir -p $(ISO_ROOT)/boot/grub
