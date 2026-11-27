@@ -1,5 +1,6 @@
 #include "timer.h"
 #include "idt.h"
+#include "scheduler.h"
 
 #include <stddef.h>
 
@@ -63,11 +64,12 @@ uint64_t timer_ticks(void)
     return ticks;
 }
 
-void irq_dispatch(struct exception_frame *frame)
+struct exception_frame *irq_dispatch(struct exception_frame *frame)
 {
     if (frame != NULL && frame->vector == 32u)
         ++ticks;
 
-    /* Acknowledge the master PIC IRQ line. */
+    /* Acknowledge before selecting the next saved interrupt frame. */
     outb(PIC_MASTER_COMMAND, 0x20u);
+    return scheduler_on_tick(frame);
 }
