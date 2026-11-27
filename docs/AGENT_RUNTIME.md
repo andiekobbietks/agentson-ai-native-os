@@ -27,7 +27,7 @@ Resource scopes are exact strings. Wildcards are rejected. Grant expiry and the 
 2. A trusted policy authority issues grants scoped to one session, agent, capability and exact resource.
 3. The agent proposes a typed request with a unique request ID and output reservation.
 4. The policy core returns allow/deny and records the decision.
-5. Only an executor may perform an allowed operation, and it must enforce OS-level isolation and output limits.
+5. The initial workspace executor may perform only the granted read-only file operation; future general executors must additionally enforce OS-level isolation and resource limits.
 6. The executor settles or cancels the reservation and reports the result.
 7. Grants are revoked and session resources released on completion or failure.
 
@@ -51,7 +51,7 @@ Those are materially different serialization contracts. The policy core therefor
 
 ## Not implemented
 
-- tool adapters or arbitrary tool execution;
+- general tool adapters or arbitrary tool execution beyond the single read-only workspace.read tool;
 - OS process/container/VM isolation;
 - filesystem, network, shell or device sandboxing;
 - user-mode processes, syscalls, IPC and per-process address spaces;
@@ -61,4 +61,4 @@ Those are materially different serialization contracts. The policy core therefor
 
 ## Failure handling
 
-Timeouts, crashes, malformed requests, expired grants and quota exhaustion must fail closed. The policy core cannot contain a malicious or compromised executor. Until an isolated executor exists, do not use this library to authorise real filesystem, network, shell, credential or device operations.
+Timeouts, crashes, malformed requests, expired grants and quota exhaustion must fail closed. The policy core cannot contain a malicious or compromised executor. Do not expose policy-management methods to agent code. Use the read-only workspace tool only in a trusted host process over a curated workspace; do not authorise writes, network, shell, credentials or device operations until an isolated executor exists.
