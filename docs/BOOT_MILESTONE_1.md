@@ -1,6 +1,6 @@
 # Boot milestone 1: x86-64 serial boot
 
-**Implementation status:** Code added; automated validation is pending the first GitHub Actions run.
+**Implementation status:** Passed in GitHub Actions run #11. The follow-on memory-map and physical-frame allocator is documented in [memory milestone 1](MEMORY_MILESTONE_1.md) and verified in run #13.
 
 ## Implemented in this milestone
 
@@ -26,7 +26,7 @@ The test boots a disposable QEMU guest with 512 MiB RAM and checks for the long-
 
 ## Deliberate limitations
 
-This is a boot proof, not yet a general-purpose kernel. The current page tables map only the first 1 GiB with writable 2 MiB pages. There is no memory-map parser, allocator, IDT, exception recovery, scheduler, userspace, SMP, device framework, model loader, inference engine or agent runtime. Interrupts remain disabled. The kernel exits after reporting a successful boot.
+This is a boot proof, not yet a general-purpose kernel. The current page tables map only the first 1 GiB with writable 2 MiB pages. This boot milestone did not include a memory-map parser or allocator; those were added in the follow-on memory milestone. There is still no page-table manager, IDT, exception recovery, scheduler, userspace, SMP, device framework, model loader, inference engine or agent runtime. Interrupts remain disabled. The kernel exits after reporting a successful boot.
 
 Do not use this kernel on physical hardware. Do not pass host disks or sensitive host devices into QEMU. The QEMU debug-exit device is a test harness mechanism, not a production kernel interface.
 

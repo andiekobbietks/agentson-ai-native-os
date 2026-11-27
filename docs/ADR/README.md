@@ -18,6 +18,7 @@ ADRs are decision records, not implementation tickets. An accepted decision desc
 | [0008](0008-review-and-release-governance.md) | Small changes, review and controlled release | Accepted |
 | [0009](0009-observability-and-recovery.md) | Observability, failure handling and recovery | Accepted as design direction |
 | [0010](0010-multiboot2-grub-boot-protocol.md) | GRUB Multiboot2 boot protocol for the first x86-64 milestone | Accepted for initial prototype |
+| [0011](0011-bitmap-frame-allocator.md) | Bounded 4 KiB bitmap frame allocator for the initial 1 GiB map | Accepted for initial kernel milestones |
 
 ## When to write an ADR
 
