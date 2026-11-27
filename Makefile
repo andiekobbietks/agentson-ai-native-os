@@ -50,7 +50,9 @@ iso: $(KERNEL_ISO)
 test-unit: | $(BUILD_DIR)
 	$(CC) -std=c11 -Wall -Wextra -Werror -Ikernel/include kernel/core/multiboot2.c kernel/mm/frame_allocator.c tests/unit/test_memory.c -o $(BUILD_DIR)/test_memory
 	$(BUILD_DIR)/test_memory
-test: $(KERNEL_ISO) test-unit
+test-model-format:
+	$(PYTHON) -m unittest discover -s tests/unit -p 'test_gguf_inspect.py' -v
+test: $(KERNEL_ISO) test-unit test-model-format
 	$(PYTHON) tests/boot/test_qemu_boot.py --qemu $(QEMU) --iso $(KERNEL_ISO)
 toolchain-check:
 	@command -v $(NASM) >/dev/null
