@@ -25,9 +25,11 @@ def _half(view: memoryview, offset: int, field: str) -> float:
 
 def iter_dequantized(data: bytes | bytearray | memoryview, type_code: int) -> Iterator[float]:
     """Yield tensor values in logical row order without materialising the result."""
+    if type(type_code) is not int:
+        raise TensorDecodeError("tensor type code must be an integer")
     try:
         view = memoryview(data).cast("B")
-    except (TypeError, ValueError) as exc:
+    except (TypeError, ValueError, BufferError) as exc:
         raise TensorDecodeError("tensor data must be a contiguous bytes-like buffer") from exc
 
     layout = GGML_TYPE_LAYOUTS.get(type_code)
@@ -125,6 +127,8 @@ def dequantize_tensor(
     """Materialise a small tensor after enforcing an explicit element limit."""
     if type(max_elements) is not int or max_elements < 0:
         raise TensorDecodeError("max_elements must be a non-negative integer")
+    if type(type_code) is not int:
+        raise TensorDecodeError("tensor type code must be an integer")
     layout = GGML_TYPE_LAYOUTS.get(type_code)
     if layout is None:
         raise TensorDecodeError(f"unsupported GGML tensor type for dequantization: {type_code}")
