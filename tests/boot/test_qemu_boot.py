@@ -14,7 +14,9 @@ def _as_text(value: str | bytes | None) -> str:
 EXPECTED_MARKERS = (
     "BOOT_STAGE: long_mode_entered",
     "MULTIBOOT2_MAGIC: valid",
-    "BOOT_OK: agentson-x86_64-multiboot2",
+    "MULTIBOOT2_MEMORY_MAP: valid",
+    "FRAME_ALLOC: valid",
+    "BOOT_OK: agentson-x86_64-memory-map-frame-allocator",
 )
 def main() -> int:
     parser = argparse.ArgumentParser()
