@@ -83,8 +83,7 @@ The file-backed reader maps a validated GGUF file read-only and streams a select
 from runtime.gguf_model import GGUFModel
 
 with GGUFModel("model.gguf") as model:
-    for value in model.iter_tensor("token_embd.weight"):
-        process_value(value)
+    tensor_sum = sum(model.iter_tensor("token_embd.weight"))
 ```
 
 The materializing helper is limited to one million elements by default. Keep model files immutable while mapped, and close any active tensor iterator before closing the model.
