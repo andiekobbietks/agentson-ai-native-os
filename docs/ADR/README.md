@@ -17,6 +17,7 @@ ADRs are decision records, not implementation tickets. An accepted decision desc
 | [0007](0007-ai-assisted-engineering.md) | Human-accountable AI-augmented engineering | Accepted |
 | [0008](0008-review-and-release-governance.md) | Small changes, review and controlled release | Accepted |
 | [0009](0009-observability-and-recovery.md) | Observability, failure handling and recovery | Accepted as design direction |
+| [0010](0010-multiboot2-grub-boot-protocol.md) | GRUB Multiboot2 boot protocol for the first x86-64 milestone | Accepted for initial prototype |
 
 ## When to write an ADR
 
