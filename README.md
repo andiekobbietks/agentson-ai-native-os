@@ -2,7 +2,7 @@
 
 An independently developed research and engineering project exploring an AI-native, x86-64 bare-metal platform, beginning with a reproducible QEMU target.
 
-**Current maturity:** independent x86-64 kernel boot is verified in QEMU. Multiboot2 memory-map parsing and a bounded physical-frame allocator are now implemented and under automated validation.
+**Current maturity:** independent x86-64 kernel boot is verified in QEMU. Multiboot2 memory-map parsing and a bounded physical-frame allocator are implemented and QEMU-verified.
 
 ## How the project began
 
@@ -87,8 +87,8 @@ Each milestone is to be delivered through one or more focused pull requests. A d
 | Reference revisions pinned | Yes |
 | Architecture decisions recorded | Initial set; see ADR index |
 | Upstream build reproduced in this project | Not yet |
-| Independent kernel implementation | Initial x86-64 kernel boots in QEMU; memory-map and allocator work in this PR |
-| QEMU boot test | Passed in GitHub Actions run #11 |
+| Independent kernel implementation | Initial x86-64 kernel boots in QEMU; memory-map parser and physical-frame allocator verified in QEMU |
+| QEMU boot and memory tests | Passed in GitHub Actions runs #11 and #13 |
 | Inference implementation | Not yet |
 | Agent runtime enforcement | Not yet |
 | AgentSON integration | Design only |
