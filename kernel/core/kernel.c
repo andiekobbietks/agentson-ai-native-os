@@ -126,7 +126,17 @@ void kernel_main(uint32_t boot_magic, uint32_t boot_info_address)
 
     idt_init();
     serial_write("IDT: valid\n");
-    serial_write("BOOT_OK: agentson-x86_64-idt-exception\n");
+
+    timer_init(100u);
+    while (timer_ticks() < 3u)
+        __asm__ volatile ("hlt");
+    timer_stop();
+    serial_write("TIMER: valid\n");
+    serial_write("TIMER_TICKS: ");
+    serial_write_hex64(timer_ticks());
+    serial_write("\n");
+
+    serial_write("BOOT_OK: agentson-x86_64-timer-idt-exception\n");
 
     /* A deliberate supervisor read from an unmapped canonical address. */
     volatile uint64_t fault_value =
