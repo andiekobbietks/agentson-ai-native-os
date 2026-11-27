@@ -1,6 +1,7 @@
 #ifndef AGENTSON_IDT_H
 #define AGENTSON_IDT_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 struct exception_frame {
@@ -24,7 +25,16 @@ struct exception_frame {
     uint64_t rip;
     uint64_t cs;
     uint64_t rflags;
+    uint64_t rsp;
+    uint64_t ss;
 } __attribute__((packed));
+
+_Static_assert(sizeof(struct exception_frame) == 176u,
+               "x86-64 IRETQ frame must contain five hardware return slots");
+_Static_assert(offsetof(struct exception_frame, rsp) == 160u,
+               "x86-64 IRETQ RSP slot offset mismatch");
+_Static_assert(offsetof(struct exception_frame, ss) == 168u,
+               "x86-64 IRETQ SS slot offset mismatch");
 
 void idt_init(void);
 void exception_dispatch(struct exception_frame *frame)
