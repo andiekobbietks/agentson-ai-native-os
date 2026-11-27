@@ -4,11 +4,14 @@ ENTRY(_start)
 SECTIONS
 {
     . = 1M;
+    __kernel_start = .;
     .multiboot ALIGN(8) : { KEEP(*(.multiboot)) }
     .text ALIGN(4K) : { *(.text*) }
     .rodata ALIGN(4K) : { *(.rodata*) }
     .data ALIGN(4K) : { *(.data*) }
     .bss ALIGN(4K) (NOLOAD) : { *(COMMON) *(.bss*) }
+    . = ALIGN(4K);
+    __kernel_end = .;
     /DISCARD/ : { *(.eh_frame*) *(.note*) *(.comment*) }
 }
 ASSERT(_start >= 0x100000, "kernel must be loaded above 1 MiB")
