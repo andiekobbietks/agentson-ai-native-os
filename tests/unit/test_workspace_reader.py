@@ -223,6 +223,12 @@ class WorkspaceReadExecutorTests(unittest.TestCase):
         self.assertEqual(result.reason, "invalid_request_or_resource_path")
         self.assertEqual(self.policy.budget_usage("session-1")["actions_used"], 0)
 
+    def test_per_read_hard_limit_rejected_before_authorization(self):
+        result = self.read(output_limit_bytes=8 * 1024 * 1024 + 1)
+        self.assertFalse(result.allowed)
+        self.assertEqual(result.reason, "invalid_request_or_resource_path")
+        self.assertEqual(self.policy.budget_usage("session-1")["actions_used"], 0)
+
     def test_non_absolute_workspace_root_rejected(self):
         with self.assertRaisesRegex(ValueError, "absolute"):
             WorkspaceReadExecutor(self.policy, ".")
