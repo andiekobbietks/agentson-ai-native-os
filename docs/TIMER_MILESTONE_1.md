@@ -1,6 +1,6 @@
 # Timer milestone 1: controlled PIT/PIC interrupt
 
-**Implementation status:** IRQ0 handler, PIC remap and PIT setup added; CI validation pending.
+**Implementation status:** Passed in GitHub Actions run #34: three PIT IRQ0 ticks were received, acknowledged and returned through IRETQ before the expected page fault.
 
 ## Implemented
 
