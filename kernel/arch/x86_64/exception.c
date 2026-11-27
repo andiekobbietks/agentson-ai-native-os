@@ -50,6 +50,15 @@ void exception_dispatch(struct exception_frame *frame)
         serial_write("ERROR_CODE: ");
         serial_write_hex64(frame->error_code);
         serial_write("\n");
+        serial_write("FAULT_RIP: ");
+        serial_write_hex64(frame->rip);
+        serial_write("\n");
+        serial_write("FAULT_CS: ");
+        serial_write_hex64(frame->cs);
+        serial_write("\n");
+        serial_write("FAULT_RFLAGS: ");
+        serial_write_hex64(frame->rflags);
+        serial_write("\n");
     }
 
     exception_exit(0x12u);
