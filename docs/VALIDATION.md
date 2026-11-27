@@ -13,9 +13,10 @@
 | Test | Expected evidence | Status |
 |---|---|---|
 | Upstream baseline build | Clean build log and artifact hash | Not run |
-| QEMU boot smoke test | Serial output and exit status | Not implemented |
+| QEMU boot smoke test | Serial output and expected debug-exit status | Passed in GitHub Actions run #11 |
+| Multiboot2 memory map | Validated tags, entry bounds and memory regions | Implemented; unit/QEMU validation in this PR |
 | Memory map | Parsed ranges and bounds checks | Not implemented |
-| Allocator | Unit tests and boundary tests | Not implemented |
+| Physical-frame allocator | Reserved-range handling, alignment, allocation/free tests | Implemented; unit/QEMU validation in this PR |
 | Inference correctness | Fixed prompts and token output | Not implemented |
 | Agent permissions | Positive and negative capability tests | Not implemented |
 | AgentSON trace | Schema validation and replay | Not implemented |
