@@ -1,6 +1,6 @@
 # Boot Design
 
-**Status:** Initial implementation added in PR #3; QEMU/CI validation pending.
+**Status:** Initial implementation merged and verified by GitHub Actions run #11. Memory-map and allocator follow-on is verified by run #13.
 
 ## First target
 x86-64 guest under QEMU, using GRUB with the Multiboot2 protocol for the initial prototype. The protocol choice is recorded in ADR 0010; the GRUB package version is supplied by the build environment and must be captured in successful CI evidence.
@@ -26,7 +26,7 @@ x86-64 guest under QEMU, using GRUB with the Multiboot2 protocol for the initial
 
 ## Current implementation boundary
 
-The initial entry stub establishes a 16 KiB stack, maps the first 1 GiB with 2 MiB pages, enables PAE and long mode, and transfers control to a freestanding x86-64 C kernel. The kernel initialises COM1, validates the Multiboot2 magic and bounded information structure, emits a success marker and exits through QEMU's test-only debug-exit device. See [boot milestone 1](BOOT_MILESTONE_1.md).
+The initial entry stub establishes a 16 KiB stack, maps the first 1 GiB with 2 MiB pages, enables PAE and long mode, and transfers control to a freestanding x86-64 C kernel. The kernel initialises COM1, validates the Multiboot2 magic and bounded information structure, parses the memory map, initialises the physical-frame allocator, emits a success marker and exits through QEMU's test-only debug-exit device. See [boot milestone 1](BOOT_MILESTONE_1.md) and [memory milestone 1](MEMORY_MILESTONE_1.md).
 
 The implementation does not yet parse the memory map, install an IDT, enable interrupts, or provide an allocator. The current identity map is deliberately temporary and is not a production memory-protection policy.
 
