@@ -16,7 +16,8 @@ EXPECTED_MARKERS = (
     "MULTIBOOT2_MAGIC: valid",
     "MULTIBOOT2_MEMORY_MAP: valid",
     "FRAME_ALLOC: valid",
-    "BOOT_OK: agentson-x86_64-memory-map-frame-allocator",
+    "PAGING: valid",
+    "BOOT_OK: agentson-x86_64-page-table-manager",
 )
 def main() -> int:
     parser = argparse.ArgumentParser()

@@ -15,6 +15,7 @@ mb2_header:
 mb2_header_end:
 section .text
 global _start
+global pml4
 extern kernel_main
 _start:
     cli

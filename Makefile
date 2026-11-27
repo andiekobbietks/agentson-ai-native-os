@@ -15,14 +15,16 @@ $(BUILD_DIR):
 	mkdir -p $@
 $(BUILD_DIR)/boot.o: kernel/arch/x86_64/boot.asm | $(BUILD_DIR)
 	$(NASM) -f elf64 $< -o $@
-$(BUILD_DIR)/kernel.o: kernel/core/kernel.c kernel/include/multiboot2.h kernel/include/frame_allocator.h | $(BUILD_DIR)
+$(BUILD_DIR)/kernel.o: kernel/core/kernel.c kernel/include/multiboot2.h kernel/include/frame_allocator.h kernel/include/paging.h | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 $(BUILD_DIR)/multiboot2.o: kernel/core/multiboot2.c kernel/include/multiboot2.h | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 $(BUILD_DIR)/frame_allocator.o: kernel/mm/frame_allocator.c kernel/include/frame_allocator.h kernel/include/multiboot2.h | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
-$(KERNEL_ELF): $(BUILD_DIR)/boot.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/multiboot2.o $(BUILD_DIR)/frame_allocator.o kernel/arch/x86_64/linker.ld
-	$(LD) $(LDFLAGS) $(BUILD_DIR)/boot.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/multiboot2.o $(BUILD_DIR)/frame_allocator.o -o $@
+$(BUILD_DIR)/paging.o: kernel/mm/paging.c kernel/include/paging.h kernel/include/frame_allocator.h | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+$(KERNEL_ELF): $(BUILD_DIR)/boot.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/multiboot2.o $(BUILD_DIR)/frame_allocator.o $(BUILD_DIR)/paging.o kernel/arch/x86_64/linker.ld
+	$(LD) $(LDFLAGS) $(BUILD_DIR)/boot.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/multiboot2.o $(BUILD_DIR)/frame_allocator.o $(BUILD_DIR)/paging.o -o $@
 	grub-file --is-x86-multiboot2 $@
 $(KERNEL_ISO): $(KERNEL_ELF) grub/grub.cfg
 	mkdir -p $(ISO_ROOT)/boot/grub
