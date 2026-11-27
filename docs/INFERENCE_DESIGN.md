@@ -49,13 +49,13 @@ Q8_1 is 36 bytes per 32-element block: two-byte scale, two-byte auxiliary sum an
 
 The decoder rejects truncated blocks, unsupported type codes and non-finite scales/values. It does not implement K-quants (Q2_K through Q6_K), IQ formats, tensor shape operations, matrix multiplication, attention, tokenization or model execution. The iterator avoids an additional full-size output list, but the caller still owns the source buffer.
 
-## Implementation sequence
+## File-backed tensor access\n\n\`runtime/gguf_model.py\` opens one GGUF file, inspects it through the same seekable file handle, and maps it read-only. It exposes tensor descriptors, a streaming \`iter_tensor\` iterator and a bounded \`dequantize_tensor\` materializer. Tensors without a fully validated extent are refused rather than guessed. The iterator holds a memory view until exhausted or closed; close the iterator before closing the model.\n\nThe reader checks file identity, size and timestamps before and after inspection/decoding. The model file must remain immutable while mapped. Concurrent truncation can invalidate a mapping and is outside the reader's guarantee. This is file-backed tensor access, not a model executor, sandbox, signature verifier or inference engine.\n\n## Implementation sequence
 
 1. **Container inspection:** bounded GGUF header, metadata and tensor-directory parsing with malformed-file tests. Complete for the documented scope.
-2. **Tensor decoding:** host reference dequantization for eight scalar/block types with deterministic golden vectors. K-quants and further type coverage remain.
-3. **Tokenizer:** validate vocabulary, merges, special tokens and tokenizer configuration from model metadata.
-4. **Host reference executor:** implement a small deterministic CPU path and compare outputs against a pinned independent runtime.
-5. **Guest integration:** only after process isolation, model backing, IPC, memory mapping and resource limits exist.
+2. **Tensor decoding:** host reference dequantization for eight scalar/block types with deterministic golden vectors. K-quants and further type coverage remain.\n3. **File-backed access:** read-only mmap tensor access with streaming and bounded materialization. Complete for supported tensor layouts.
+4. **Tokenizer:** validate vocabulary, merges, special tokens and tokenizer configuration from model metadata.
+5. **Host reference executor:** implement a small deterministic CPU path and compare outputs against a pinned independent runtime.
+6. **Guest integration:** only after process isolation, model backing, IPC, memory mapping and resource limits exist.
 
 ## Explicit non-goals of the current tools
 
