@@ -9,7 +9,8 @@ from runtime.workspace_reader import WorkspaceReadExecutor
 class WorkspaceReadExecutorTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
-        self.root = self.temp.name
+        self.root = os.path.join(self.temp.name, "workspace")
+        os.mkdir(self.root)
         os.mkdir(os.path.join(self.root, "docs"))
         with open(os.path.join(self.root, "README.md"), "wb") as stream:
             stream.write(b"AgentSON workspace read test\n")
@@ -200,6 +201,27 @@ class WorkspaceReadExecutorTests(unittest.TestCase):
         )
         self.assertTrue(result.allowed)
         self.assertEqual(result.content, b"")
+
+    def test_symlink_workspace_root_is_rejected(self):
+        linked_root = os.path.join(self.temp.name, "workspace-link")
+        os.symlink(self.root, linked_root)
+        executor = WorkspaceReadExecutor(self.policy, linked_root)
+        result = executor.read_file(
+            request_id="root-link",
+            session_id="session-1",
+            agent_id="agent-1",
+            relative_path="README.md",
+            output_limit_bytes=100,
+            now_ms=100,
+        )
+        self.assertFalse(result.allowed)
+        self.assertEqual(result.reason, "resource_unavailable")
+
+    def test_invalid_completion_time_does_not_reserve_budget(self):
+        result = self.read(completed_at_ms=99)
+        self.assertFalse(result.allowed)
+        self.assertEqual(result.reason, "invalid_request_or_resource_path")
+        self.assertEqual(self.policy.budget_usage("session-1")["actions_used"], 0)
 
     def test_non_absolute_workspace_root_rejected(self):
         with self.assertRaisesRegex(ValueError, "absolute"):
