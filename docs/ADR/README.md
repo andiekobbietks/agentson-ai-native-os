@@ -22,7 +22,10 @@ ADRs are decision records, not implementation tickets. An accepted decision desc
 | [0012](0012-x86-64-page-table-manager.md) | Explicit 4 KiB page mapping, unmapping and translation | Accepted for bootstrap kernel milestones |
 | [0013](0013-idt-and-exception-diagnostics.md) | Install IDT gates and diagnose CPU exceptions before enabling interrupts | Accepted for bootstrap kernel milestones |
 | [0014](0014-pit-timer-interrupt.md) | Use PIT and remapped legacy PIC for a controlled IRQ0 timer test | Accepted for bootstrap interrupt milestone |
-| [0015](0015-preemptive-kernel-task-scheduler.md) | Two-task ring-0 round-robin scheduling from timer interrupt frames | Accepted for two-task QEMU prototype |\n| [0016](0016-gguf-model-container.md) | Use GGUF for initial host-side model-container inspection | Accepted for inspection prototype |\n| [0017](0017-agent-capability-policy-core.md) | Host-side deny-by-default capability policy core | Accepted for host policy prototype |\n| [0018](0018-workspace-read-executor.md) | Read-only workspace executor with descriptor-relative no-follow opens | Accepted for initial host-side tool prototype |
+| [0015](0015-preemptive-kernel-task-scheduler.md) | Two-task ring-0 round-robin scheduling from timer interrupt frames | Accepted for two-task QEMU prototype |
+| [0016](0016-gguf-model-container.md) | Use GGUF for initial host-side model-container inspection | Accepted for inspection prototype |
+| [0017](0017-agent-capability-policy-core.md) | Host-side deny-by-default capability policy core | Accepted for host policy prototype |
+| [0018](0018-workspace-read-executor.md) | Read-only workspace executor with descriptor-relative no-follow opens | Accepted for initial host-side tool prototype |
 
 ## When to write an ADR
 
