@@ -133,7 +133,7 @@ class AgentPolicyTests(unittest.TestCase):
             self.request("req-2", output_limit_bytes=1),
             120,
         )
-        self.assertEqual(next_decision.reason, "output_budget_exceeded")
+        self.assertEqual(next_decision.reason, "session_policy_violation")
 
     def test_output_overrun_locks_zero_output_session(self):
         budget = SessionBudget(max_actions=10, max_output_bytes=0, deadline_ms=1_500)
