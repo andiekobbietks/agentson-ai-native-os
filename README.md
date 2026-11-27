@@ -2,7 +2,7 @@
 
 An independently developed research and engineering project exploring an AI-native, x86-64 bare-metal platform, beginning with a reproducible QEMU target.
 
-**Current maturity:** independent x86-64 kernel boot is verified in QEMU. Multiboot2 memory-map parsing and a bounded physical-frame allocator are QEMU-verified; 4 KiB page-table mapping, unmapping and translation are QEMU-verified in GitHub Actions run #19.
+**Current maturity:** independent x86-64 kernel boot is verified in QEMU. Multiboot2 memory-map parsing and a bounded physical-frame allocator are QEMU-verified; 4 KiB page-table mapping, unmapping and translation are QEMU-verified in GitHub Actions run #22; IDT and exception diagnostics are now under validation.
 
 ## How the project began
 
@@ -70,7 +70,7 @@ Both repositories are reported as MIT-licensed. Before adapting any file, verify
 
 1. **Research baseline:** review pinned upstream build instructions and record a reproducible reference environment.
 2. **Boot milestone:** implemented and QEMU-verified GRUB Multiboot2 x86-64 entry, long-mode transition and serial diagnostics.
-3. **Kernel foundations:** Multiboot2 memory-map parsing and 4 KiB physical-frame allocator verified; initial page-table manager verified in QEMU; IDT, exceptions and interrupts are next.
+3. **Kernel foundations:** Multiboot2 memory-map parsing and 4 KiB physical-frame allocator verified; initial page-table manager verified in QEMU; IDT and exception diagnostics are under validation, followed by controlled interrupt handling.
 4. **Concurrency and devices:** SMP correctness and narrowly scoped device support.
 5. **Reference inference:** model-format validation and host-side inference comparison.
 6. **Agent execution:** isolated runtime, capability enforcement and resource limits.
