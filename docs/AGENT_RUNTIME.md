@@ -1,6 +1,6 @@
 # Agent Runtime
 
-**Status:** Host-side deny-by-default capability policy core implemented; tool execution, process isolation and a complete agent runtime are not implemented.
+**Status:** Host-side deny-by-default capability policy core and one read-only workspace-file executor implemented; general tool execution, process isolation and a complete agent runtime are not implemented.
 
 ## Placement
 
@@ -33,7 +33,7 @@ Resource scopes are exact strings. Wildcards are rejected. Grant expiry and the 
 
 An allow decision is permission to attempt an operation, not proof that the operation is safe or that the executor enforced the boundary.
 
-## AgentSON compatibility gate
+## Read-only workspace executor\n\nThe initial executor exposes only `workspace.read` for one regular file beneath a trusted absolute workspace root. It constructs an exact `workspace:/relative/path` resource, obtains a policy decision, and uses descriptor-relative `O_NOFOLLOW` / `O_DIRECTORY` opens for each path component. It rejects traversal, symlinks, non-regular files and device changes, checks file metadata before and after reading, and enforces the reserved output limit.\n\nThe root path and session/agent identities are trusted host configuration. This tool is Linux/POSIX-specific. It does not write files, list directories, execute commands, connect to networks or create processes. It does not prevent hard links within the workspace from referring to data also reachable elsewhere, and it does not provide process isolation. The workspace must be curated by the host.\n\n## AgentSON compatibility gate
 
 AgentSON integration is deliberately not emitted yet. At the pinned AgentSON repository revision [3ced731](https://github.com/andiekobbietks/AgentSON/commit/3ced7316c64802e289c050de8903838ee160df87):
 
