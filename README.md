@@ -1,64 +1,77 @@
 # AgentSON AI-Native OS
 
-An independently developed, research-first AI-native bare-metal platform. The initial implementation target is x86-64 in QEMU, using publicly inspectable source and reproducible validation.
+An independently developed, research-first AI-native bare-metal platform. Initial target: x86-64 in QEMU, using public source references and reproducible validation.
 
-**Status:** Project scaffold. No kernel implementation has been imported or validated yet.
+**Status:** Research scaffold and architecture baseline. No kernel implementation has yet been imported, built or boot-tested in this repository.
 
-## Goals
+## Engineering direction
 
-- Establish a reproducible bare-metal boot and test baseline.
-- Build kernel capabilities incrementally, starting with boot, serial output and memory discovery.
-- Integrate local inference only after the kernel baseline is stable.
-- Keep agent execution bounded, inspectable and permissioned.
-- Emit portable AgentSON-compatible execution records.
+The project studies the public work of [Mitko Vasilev](https://github.com/mitkox/qwen38-27b-baremetal-os) and [alesha-pro](https://github.com/alesha-pro/llm.asm), but is an independent implementation. Their performance and correctness claims are upstream claims until reproduced here.
 
-## Source strategy
+Key principles:
+- Keep the bootable kernel small and independent of model-weight provisioning.
+- Treat model weights as a separate, read-only payload; ivshmem is an optional later experiment, not a boot dependency.
+- Validate memory maps, PCI BARs, model headers, offsets and sizes before access.
+- Evaluate huge pages as a measured optimisation with smaller-page fallback.
+- Establish a Linux/host reference path and compare outputs against it.
+- Test numerical correctness and deterministic behaviour across CPU counts.
+- Keep inference, model parsing and agent tools outside ring 0 in initial milestones.
+- Emit versioned AgentSON execution records without treating observability as access control.
 
-The initial research reference is [`alesha-pro/llm.asm`](https://github.com/alesha-pro/llm.asm), particularly its `02-baremetal-os/` implementation and Makefile. This project is intended to be an independent implementation and integration workspace, not a blind copy. Review upstream source, commit history, dependencies and licence before importing or adapting any code. Preserve required notices for any reused MIT-licensed portions.
+## Start here
 
-The restricted-source `tomstuhl/agentos` project is an architectural reference only. This project must not depend on unavailable source.
+- [AI contributor instructions](AGENTS.md)
+- [Product requirements](docs/PRD.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Threat model](docs/THREAT_MODEL.md)
+- [Boot design](docs/BOOT_DESIGN.md)
+- [Memory model](docs/MEMORY_MODEL.md)
+- [Inference design](docs/INFERENCE_DESIGN.md)
+- [Agent runtime](docs/AGENT_RUNTIME.md)
+- [Component interfaces](docs/INTERFACES.md)
+- [Reference engineering lessons](docs/REFERENCE_ENGINEERING.md)
+- [Windows/WSL2 setup](docs/WINDOWS_WSL2.md)
+- [Validation plan](docs/VALIDATION.md)
+- [Third-party notices](THIRD_PARTY_NOTICES.md)
+
+## Pinned research references
+
+| Project | Pinned commit | Role |
+|---|---|---|
+| [alesha-pro/llm.asm](https://github.com/alesha-pro/llm.asm) | [48feccb](https://github.com/alesha-pro/llm.asm/commit/48feccbfd57cb669440f31ff64958d95bb8b848e) | Public base implementation and shared assembly/kernel work |
+| [mitkox/qwen38-27b-baremetal-os](https://github.com/mitkox/qwen38-27b-baremetal-os) | [6c43dec](https://github.com/mitkox/qwen38-27b-baremetal-os/commit/6c43decc38aa8ea5fd22dba31360e8004601097d) | 27B hybrid model, ivshmem, huge-page and SMP design reference |
+
+Both references are reported as MIT-licensed. Verify the exact file notices before adapting code. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). No upstream source has been copied into this repository by the documentation baseline work.
+
+## Roadmap
+
+1. **P0:** audit and reproduce pinned upstream build(s), recording toolchain, source inventory, logs and hashes.
+2. **P1:** independently implement a minimal QEMU boot and serial smoke test.
+3. **P2:** memory map, allocator, exceptions and interrupts.
+4. **P3:** SMP and scoped device support.
+5. **P4:** host-reference inference and model-format validation.
+6. **P5:** isolated agent runtime and capability enforcement.
+7. **P6:** AgentSON, OIDL and JITLLM adapters.
+8. **P7:** fault injection, reproducibility, security and performance evaluation.
 
 ## Current validation status
 
 | Capability | Status |
 |---|---|
-| Repository scaffold | Created |
-| Upstream source and licence identified | Initial inspection only |
-| Reproducible upstream build | Not yet run |
-| Independent kernel boot | Not implemented |
-| Bare-metal inference | Not implemented |
-| AgentSON event integration | Design placeholder |
-| Security review | Not started |
+| Repository and architecture documentation | Present |
+| Upstream revisions pinned | Yes; see research register |
+| Upstream build reproduced locally | Not yet |
+| Independent kernel source | Not implemented |
+| QEMU boot test | Not implemented |
+| Inference implementation | Not implemented |
+| Agent runtime enforcement | Not implemented |
+| AgentSON integration | Design only |
+| CI | Documentation/metadata hygiene check added; kernel CI awaits source |
 
-## Roadmap
+## Scope and safety
 
-1. **P0 - Baseline audit:** record upstream commit SHA, source inventory, licence, toolchain and build instructions; reproduce upstream build in a disposable environment.
-2. **P1 - Boot baseline:** create a minimal x86-64 boot target with serial diagnostics and QEMU smoke test.
-3. **P2 - Kernel foundations:** memory map, physical allocator, exceptions and interrupt handling.
-4. **P3 - SMP and devices:** CPU discovery, AP startup and carefully scoped device support.
-5. **P4 - Inference:** model format, tokenizer, memory requirements and inference backend.
-6. **P5 - Agent runtime:** bounded tool execution, capability checks and explicit permission boundaries.
-7. **P6 - AgentSON:** versioned event schema, provenance, integrity and replay tests.
-8. **P7 - Reliability:** fault injection, repeatability, performance methodology and security review.
+This is experimental OS research, not a production operating system or a hardened boundary against a malicious hypervisor, firmware or physical attacker. Use disposable virtual machines. Do not pass through host disks or expose unrestricted devices. Do not claim performance or correctness without reproducible evidence.
 
-## Repository layout
+## Licence
 
-- `docs/` - product requirements, architecture, research, roadmap and validation.
-- `kernel/` - future boot and kernel implementation.
-- `inference/` - future model and inference components.
-- `agents/` - future agent runtime and permission model.
-- `hardware/` - architecture-specific code and capability descriptors.
-- `integrations/` - AgentSON, OIDL and inference-runtime adapters.
-- `tests/` - smoke, unit, integration and determinism tests.
-- `scripts/` - reproducibility and development helpers.
-
-## Non-goals for the first milestone
-
-- Replacing a daily-driver operating system.
-- Running untrusted autonomous agents with unrestricted hardware access.
-- Claiming production readiness or real-time safety.
-- Claiming benchmark results before independent reproduction.
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md). Every capability claim should link to a reproducible test, benchmark procedure or clearly labelled external source.
+The original project documentation and independently authored material are licensed under Apache-2.0. Third-party components retain their own licences and notices. Model weights and datasets have separate terms.
