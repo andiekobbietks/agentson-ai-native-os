@@ -5,6 +5,7 @@
 #include "paging.h"
 #include "serial.h"
 #include "timer.h"
+#include "scheduler.h"
 
 #define MULTIBOOT2_BOOT_MAGIC 0x36D76289u
 #define MAX_BOOTINFO_BYTES (1024u * 1024u)
@@ -127,16 +128,30 @@ void kernel_main(uint32_t boot_magic, uint32_t boot_info_address)
     idt_init();
     serial_write("IDT: valid\n");
 
+    scheduler_init();
     timer_init(100u);
-    while (timer_ticks() < 3u)
+    while (scheduler_ticks() < 9u)
         __asm__ volatile ("hlt");
     timer_stop();
+
+    const uint64_t task_a_count = scheduler_task_counter(0u);
+    const uint64_t task_b_count = scheduler_task_counter(1u);
+    if (timer_ticks() < 9u || task_a_count == 0u || task_b_count == 0u)
+        stop_with_error("preemptive scheduler did not run both tasks");
+
     serial_write("TIMER: valid\n");
     serial_write("TIMER_TICKS: ");
     serial_write_hex64(timer_ticks());
     serial_write("\n");
+    serial_write("SCHEDULER: valid\n");
+    serial_write("TASK_A_STEPS: ");
+    serial_write_hex64(task_a_count);
+    serial_write("\n");
+    serial_write("TASK_B_STEPS: ");
+    serial_write_hex64(task_b_count);
+    serial_write("\n");
 
-    serial_write("BOOT_OK: agentson-x86_64-timer-idt-exception\n");
+    serial_write("BOOT_OK: agentson-x86_64-preemptive-scheduler\n");
 
     /* A deliberate supervisor read from an unmapped canonical address. */
     volatile uint64_t fault_value =

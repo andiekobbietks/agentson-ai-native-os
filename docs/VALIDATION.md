@@ -7,19 +7,37 @@
 - Save build logs and hashes of generated artifacts.
 - Benchmark only after correctness tests pass.
 - Do not compare results unless model, quantisation, context, prompt, hardware and measurement method are comparable.
+- A merged PR is not itself validation evidence; retain the relevant CI run, serial markers, exit status and test artifacts.
 
-## Initial matrix
+## Current milestone matrix
 
 | Test | Expected evidence | Status |
 |---|---|---|
-| Upstream baseline build | Clean build log and artifact hash | Not run |
-| QEMU boot smoke test | Serial output and expected debug-exit status | Passed in GitHub Actions run #11 |
-| Multiboot2 memory map | Validated tags, entry bounds and memory regions | Implemented; unit/QEMU validation in this PR |
-| Memory map | Parsed ranges and bounds checks | Not implemented |
-| Physical-frame allocator | Reserved-range handling, alignment, allocation/free tests | Passed in GitHub Actions run #13 |
-| Page-table manager | Create tables, split huge page, map/write/translate/unmap | Passed in GitHub Actions run #22 |
-| IDT and exception path | Install vectors 0–31; handle expected supervisor page fault | Passed in GitHub Actions run #29 |
-| PIT timer IRQ | Remap PIC, install vector 32, receive three ticks, EOI and mask IRQ | Passed in GitHub Actions run #34 |
-| Inference correctness | Fixed prompts and token output | Not implemented |
-| Agent permissions | Positive and negative capability tests | Not implemented |
-| AgentSON trace | Schema validation and replay | Not implemented |
+| Upstream baseline build | Clean build log, pinned revision and artifact hash | Not run in this project |
+| Independent x86-64 boot | ELF/ISO build, long-mode marker, Multiboot2 validation and expected QEMU exit | Passed in GitHub Actions |
+| Multiboot2 memory map | Tag bounds, version/entry size, alignment and malformed-input tests | Unit and QEMU tests passed |
+| Physical-frame allocator | Reserved-range handling, alignment, allocation/free and duplicate-free rejection | Unit and QEMU tests passed |
+| Page-table manager | Intermediate table allocation, huge-page split, map/write/translate/unmap | Passed in GitHub Actions run #22 |
+| IDT and exception path | Install vectors 0–31; expected supervisor not-present page fault, CR2 and error code | Passed in GitHub Actions run #29 |
+| PIT timer IRQ | PIC remap, vector 32, PIT ticks, EOI, IRETQ and timer mask | Passed in GitHub Actions; main commit records run #36 |
+| Two-task context switch | Both task counters advance, boot context resumes, timer stops, expected page fault still passes | Passed in GitHub Actions run #46 (QEMU) |
+| SMP | AP startup, per-core state, locking and TLB shootdown tests | Not implemented |
+| Model loading/inference | Validated model/tokenizer fixtures, deterministic fixed-prompt output and reference comparison | Not implemented |
+| Agent permissions | Positive and negative capability tests, quotas and fail-closed behaviour | Not implemented |
+| AgentSON trace | Schema validation, ordering, integrity, replay and failure tests | Not implemented |
+
+## Reproduction
+
+On Ubuntu or WSL2 Ubuntu, install the packages listed in [Windows/WSL2 setup](WINDOWS_WSL2.md), then run:
+
+```bash
+make toolchain-check
+make clean all check
+make test
+```
+
+The QEMU test runs in a disposable virtual machine and checks serial markers plus the expected debug-exit status. GitHub Actions runs the same target. Do not use physical hardware or pass host disks/devices through to the guest.
+
+## Evidence still required
+
+The current bootstrap kernel does not establish production correctness, isolation or security. Before expanding the implementation, add targeted negative tests, stack and interrupt invariants, fault injection, reproducible artifact hashes and review of the actual workflow output. The two-task scheduler experiment passed GitHub Actions run #46, including its QEMU serial-marker and expected-exit checks. Broader scheduler correctness, stack guards, interrupt nesting and SMP remain unvalidated.

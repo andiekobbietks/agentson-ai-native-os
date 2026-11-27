@@ -19,8 +19,11 @@ EXPECTED_MARKERS = (
     "PAGING: valid",
     "IDT: valid",
     "TIMER: valid",
+    "SCHEDULER: valid",
+    "TASK_A_STEPS: ",
+    "TASK_B_STEPS: ",
     "TIMER_TICKS: ",
-    "BOOT_OK: agentson-x86_64-timer-idt-exception",
+    "BOOT_OK: agentson-x86_64-preemptive-scheduler",
     "EXCEPTION: page_fault",
     "EXCEPTION_TEST: page_fault_confirmed",
 )

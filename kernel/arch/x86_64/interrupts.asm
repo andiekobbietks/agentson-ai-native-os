@@ -114,10 +114,9 @@ irq_common:
     mov ss, ax
 
     mov rdi, rsp
-    mov rbx, rsp
     and rsp, -16
     call irq_dispatch
-    mov rsp, rbx
+    mov rsp, rax
 
     pop r15
     pop r14
