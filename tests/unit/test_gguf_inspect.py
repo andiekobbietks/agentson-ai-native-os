@@ -143,6 +143,14 @@ class GGUFInspectorTests(unittest.TestCase):
                 tensors=[("bad.tensor", (0, 2), 0, 0)],
             ))
 
+    def test_removed_ggml_type_codes_rejected(self):
+        for removed_code in (4, 5, 31, 32, 33, 36, 37, 38):
+            with self.subTest(removed_code=removed_code):
+                with self.assertRaisesRegex(GGUFError, "unknown GGML"):
+                    inspect_gguf_bytes(_build_gguf(
+                        tensors=[("removed.tensor", (32,), removed_code, 0)],
+                    ))
+
     def test_unknown_ggml_type_rejected(self):
         with self.assertRaisesRegex(GGUFError, "unknown GGML"):
             inspect_gguf_bytes(_build_gguf(
