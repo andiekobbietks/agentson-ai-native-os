@@ -2,7 +2,7 @@
 
 An independently developed research and engineering project exploring an AI-native, x86-64 bare-metal platform, beginning with a reproducible QEMU target.
 
-**Current maturity:** the independent x86-64 kernel boot, Multiboot2 memory-map parsing, bounded physical-frame allocator, 4 KiB page-table operations, IDT exception diagnostics and a controlled PIT/PIC IRQ0 timer path have been exercised in QEMU through GitHub Actions. The two-task ring-0 preemptive context-switch experiment is QEMU-verified in GitHub Actions run #57. A host-side GGUF inspector and bounded dequantizer for F32, F16, Q4_0, Q4_1, Q5_0, Q5_1, Q8_0 and Q8_1 are implemented, alongside the deny-by-default capability policy core and one read-only workspace-file executor (8 MiB maximum response). Native model inference and an isolated/general-purpose agent runtime are not implemented.
+**Current maturity:** the independent x86-64 kernel boot, Multiboot2 memory-map parsing, bounded physical-frame allocator, 4 KiB page-table operations, IDT exception diagnostics and a controlled PIT/PIC IRQ0 timer path have been exercised in QEMU through GitHub Actions. The two-task ring-0 preemptive context-switch experiment is QEMU-verified in GitHub Actions run #75. A host-side GGUF inspector and bounded dequantizer for F32, F16, Q4_0, Q4_1, Q5_0, Q5_1, Q8_0 and Q8_1 are implemented, alongside the deny-by-default capability policy core and one read-only workspace-file executor (8 MiB maximum response). Native model inference and an isolated/general-purpose agent runtime are not implemented.
 
 ## How the project began
 
@@ -102,7 +102,7 @@ Each milestone is to be delivered through one or more focused pull requests. A d
 | 4 KiB page-table map/unmap/translate | QEMU-verified; single-core bootstrap only |
 | IDT and expected page-fault diagnostics | QEMU-verified |
 | PIT/PIC IRQ0 timer path | QEMU-verified; legacy PIC, single-core test path |
-| Two-task ring-0 context switching | QEMU-verified in GitHub Actions run #46; both tasks ran, boot context resumed and page-fault test passed |
+| Two-task ring-0 context switching | QEMU-verified in GitHub Actions run #75; both tasks ran, boot context resumed and page-fault test passed |
 | SMP, userspace and process isolation | Not implemented |
 | GGUF metadata/tensor-directory inspection | Host-side bounded parser and malformed-file tests; no model execution |
 | GGUF tensor dequantization | Host-side reference decoder for eight tensor types; no matrix multiplication or inference |
