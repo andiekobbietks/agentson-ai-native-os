@@ -77,7 +77,9 @@ class AgentPolicyTests(unittest.TestCase):
         self.assertEqual(wrong_agent.reason, "no_matching_grant")
 
     def test_expired_grant_denied(self):
-        decision = self.engine.authorize(self.request(), now_ms=2_000)
+        long_budget = SessionBudget(max_actions=10, max_output_bytes=1_000, deadline_ms=3_000)
+        engine = PolicyEngine([self.grant], {"session-1": long_budget})
+        decision = engine.authorize(self.request(), now_ms=2_000)
         self.assertFalse(decision.allowed)
         self.assertEqual(decision.reason, "grant_expired")
 
