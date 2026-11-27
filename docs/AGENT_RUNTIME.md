@@ -19,7 +19,7 @@ The host-side policy engine currently provides:
 - settlement/cancellation of output reservations;
 - thread-safe authorization and in-memory decision audit records.
 
-Resource scopes are exact strings. Wildcards are rejected. The policy engine does not canonicalise filesystem paths, resolve symlinks, open files, connect to networks or execute processes. The eventual executor must canonicalise the resource independently and enforce the same scope at the point of use.
+Resource scopes are exact strings. Wildcards are rejected. Grant expiry and the session deadline are checked when a request is authorised; they do not terminate an operation already in progress. Output reservations are accounting controls, not a substitute for an executor-side output limiter. The policy engine does not canonicalise filesystem paths, resolve symlinks, open files, connect to networks or execute processes. The eventual executor must canonicalise the resource independently and enforce the same scope at the point of use.
 
 ## Execution contract
 
