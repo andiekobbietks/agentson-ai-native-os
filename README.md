@@ -2,7 +2,7 @@
 
 An independently developed research and engineering project exploring an AI-native, x86-64 bare-metal platform, beginning with a reproducible QEMU target.
 
-**Current maturity:** the independent x86-64 kernel boot, Multiboot2 memory-map parsing, bounded physical-frame allocator, 4 KiB page-table operations, IDT exception diagnostics and a controlled PIT/PIC IRQ0 timer path have been exercised in QEMU through GitHub Actions. The two-task ring-0 preemptive context-switch experiment is in a follow-on implementation branch and remains pending its own CI validation. Native model inference and an agent runtime are not implemented.
+**Current maturity:** the independent x86-64 kernel boot, Multiboot2 memory-map parsing, bounded physical-frame allocator, 4 KiB page-table operations, IDT exception diagnostics and a controlled PIT/PIC IRQ0 timer path have been exercised in QEMU through GitHub Actions. The two-task ring-0 preemptive context-switch experiment is QEMU-verified in GitHub Actions run #46. Native model inference and an agent runtime are not implemented. Native model inference and an agent runtime are not implemented.
 
 ## How the project began
 
@@ -91,7 +91,7 @@ Each milestone is to be delivered through one or more focused pull requests. A d
 | 4 KiB page-table map/unmap/translate | QEMU-verified; single-core bootstrap only |
 | IDT and expected page-fault diagnostics | QEMU-verified |
 | PIT/PIC IRQ0 timer path | QEMU-verified; legacy PIC, single-core test path |
-| Two-task ring-0 context switching | Implementation branch; CI validation pending |
+| Two-task ring-0 context switching | QEMU-verified in GitHub Actions run #46; both tasks ran, boot context resumed and page-fault test passed |
 | SMP, userspace and process isolation | Not implemented |
 | Native model loading/inference | Not implemented |
 | Agent capability enforcement/runtime | Not implemented |
