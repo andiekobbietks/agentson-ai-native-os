@@ -104,8 +104,11 @@ Each milestone is to be delivered through one or more focused pull requests. A d
 | PIT/PIC IRQ0 timer path | QEMU-verified; legacy PIC, single-core test path |
 | Two-task ring-0 context switching | QEMU-verified in GitHub Actions run #46; both tasks ran, boot context resumed and page-fault test passed |
 | SMP, userspace and process isolation | Not implemented |
-| GGUF metadata/tensor-directory inspection | Host-side bounded parser and malformed-file tests; no model execution |\n| Native model loading/inference | Not implemented |
-| Agent capability policy | Host-side exact-scope grants, revocation, approvals and session budgets |\n| Read-only workspace executor | One file-read tool with exact grants, no-follow opens and output limits; no process isolation |\n| Agent runtime / sandbox | Not implemented |
+| GGUF metadata/tensor-directory inspection | Host-side bounded parser and malformed-file tests; no model execution |
+| Native model loading/inference | Not implemented |
+| Agent capability policy | Host-side exact-scope grants, revocation, approvals and session budgets |
+| Read-only workspace executor | One file-read tool with exact grants, no-follow opens and output limits; no process isolation |
+| Agent runtime / sandbox | Not implemented |
 | AgentSON trace integration/replay | Design only |
 | CI | Documentation hygiene, freestanding kernel build, host memory tests and QEMU smoke test |
 
