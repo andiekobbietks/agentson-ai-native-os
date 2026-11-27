@@ -4,6 +4,13 @@ from __future__ import annotations
 import argparse
 import subprocess
 import sys
+def _as_text(value: str | bytes | None) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, bytes):
+        return value.decode("utf-8", errors="replace")
+    return value
+
 EXPECTED_MARKERS = (
     "BOOT_STAGE: long_mode_entered",
     "MULTIBOOT2_MAGIC: valid",
@@ -26,7 +33,7 @@ def main() -> int:
         result = subprocess.run(command, capture_output=True, text=True,
                                 timeout=args.timeout, check=False)
     except subprocess.TimeoutExpired as exc:
-        output = (exc.stdout or "") + (exc.stderr or "")
+        output = _as_text(exc.stdout) + _as_text(exc.stderr)
         print(output, file=sys.stderr)
         print("FAIL: QEMU did not reach debug-exit before timeout.",
               file=sys.stderr)
