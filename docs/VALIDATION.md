@@ -13,7 +13,8 @@
 | Test | Expected evidence | Status |
 |---|---|---|
 | Upstream baseline build | Clean build log and artifact hash | Not run |
-| QEMU boot smoke test | Serial output and exit status | Not implemented |
+| Kernel compile and Multiboot2 header | ELF header, linker output and grub-file check | Implemented in workflow; first run pending |
+| QEMU boot smoke test | Serial output and debug-exit status | Harness implemented; first run pending |
 | Memory map | Parsed ranges and bounds checks | Not implemented |
 | Allocator | Unit tests and boundary tests | Not implemented |
 | Inference correctness | Fixed prompts and token output | Not implemented |
