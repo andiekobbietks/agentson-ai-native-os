@@ -1,0 +1,49 @@
+# Architecture Decision Records
+
+This directory records consequential technical and product-engineering decisions for AgentSON AI-Native OS.
+
+ADRs are decision records, not implementation tickets. An accepted decision describes the chosen direction and the evidence or validation still required. The validation matrix and implementation code determine whether a capability is actually delivered.
+
+## Decision register
+
+| ADR | Decision | Status |
+|---|---|---|
+| [0001](0001-research-first-scope.md) | Research-first scope and staged implementation | Accepted |
+| [0002](0002-model-memory-boundary.md) | Keep model weights outside the kernel image | Accepted for research baseline |
+| [0003](0003-inference-boundary.md) | Keep initial inference outside the privileged kernel | Accepted for initial milestones |
+| [0004](0004-modular-portable-architecture.md) | Modular boundaries and replaceable components | Accepted for initial architecture |
+| [0005](0005-evidence-and-reproducibility.md) | Evidence, reproducibility and benchmark integrity | Accepted |
+| [0006](0006-security-and-trust-boundaries.md) | Security boundaries and least privilege | Accepted for initial architecture |
+| [0007](0007-ai-assisted-engineering.md) | Human-accountable AI-augmented engineering | Accepted |
+| [0008](0008-review-and-release-governance.md) | Small changes, review and controlled release | Accepted |
+| [0009](0009-observability-and-recovery.md) | Observability, failure handling and recovery | Accepted as design direction |
+
+## When to write an ADR
+
+Write an ADR when a decision materially affects system structure, security, interfaces, portability, dependencies, data handling, operational behaviour or future change cost. Do not create an ADR for every code edit.
+
+## Lifecycle
+
+- **Proposed:** under discussion; not an approved project constraint.
+- **Accepted:** selected for the stated scope; implementation and validation may still be outstanding.
+- **Superseded:** replaced by a later ADR, which must link back to it.
+- **Deprecated:** no longer recommended, with rationale recorded.
+
+An ADR is not silently rewritten after acceptance. If context changes, add a new ADR and mark the earlier one superseded. Correct factual errors transparently and retain the decision history.
+
+## Required structure
+
+1. Title and unique number.
+2. Status and date.
+3. Context: problem, constraints, assumptions and evidence.
+4. Decision: what is being chosen and the scope of the choice.
+5. Alternatives considered, including reasons for rejection.
+6. Consequences: benefits, costs, risks and follow-on work.
+7. Validation: how the decision will be tested and what evidence is required.
+8. References: primary sources, exact revisions and relevant project artefacts.
+
+ADRs should be concise enough to review and specific enough to guide implementation. Link related requirements, threat-model entries, issues, pull requests and tests where available.
+
+## Governance
+
+ADRs follow the repository's normal pull-request process. AI-assisted drafting is permitted, but the author and reviewer remain accountable for source accuracy, trade-offs and the final decision. Do not mark a decision accepted merely because an AI tool suggested it or because a PR merged.
