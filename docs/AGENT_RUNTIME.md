@@ -37,7 +37,7 @@ An allow decision is permission to attempt an operation, not proof that the oper
 
 The initial executor exposes only `workspace.read` for one regular file beneath a trusted absolute workspace root. It constructs an exact `workspace:/relative/path` resource, obtains a policy decision, and uses descriptor-relative `O_NOFOLLOW` / `O_DIRECTORY` opens for each path component. It rejects traversal, symlinks, non-regular files and device changes, checks file metadata before and after reading, and enforces the reserved output limit with an 8 MiB per-read hard cap and a 128-component path-depth cap.
 
-The root path and session/agent identities are trusted host configuration. This tool is Linux/POSIX-specific. It does not write files, list directories, execute commands, connect to networks or create processes. It does not prevent hard links within the workspace from referring to data also reachable elsewhere, and it does not provide process isolation. The workspace must be curated by the host.
+The root path and session/agent identities are trusted host configuration. This tool is Linux/POSIX-specific. It does not write files, list directories, execute commands, connect to networks or create processes. It does not prevent hard links within the workspace from referring to data also reachable elsewhere, detect same-device bind mounts, or prevent an untrusted writer from renaming directories during a read. It does not provide process isolation. The workspace must be curated by the host and must not be writable by untrusted principals while this tool is in use.
 
 ## AgentSON compatibility gate
 
