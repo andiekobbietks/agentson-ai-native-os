@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "frame_allocator.h"
 #include "multiboot2.h"
+#include "paging.h"
 
 #define COM1 0x3F8u
 #define QEMU_EXIT_PORT 0xF4u
@@ -10,6 +11,7 @@
 
 extern uint8_t __kernel_start[];
 extern uint8_t __kernel_end[];
+extern uint8_t pml4[];
 
 static inline void outb(uint16_t port, uint8_t value) {
     __asm__ volatile ("outb %0, %1" : : "a"(value), "Nd"(port));
