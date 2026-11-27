@@ -21,5 +21,9 @@ jobs:
         run: make toolchain-check
       - name: Build Multiboot2 kernel and ISO
         run: make clean all check
+      - name: Inspect interrupt-return disassembly
+        run: |
+          nm -n build/kernel.elf | grep -E 'irq0_stub|irq_dispatch|scheduler_on_tick|task_a|task_b'
+          objdump -d build/kernel.elf | grep -B 12 -A 3 -E '\\biretq?\\b'
       - name: Boot kernel in QEMU
         run: make test
