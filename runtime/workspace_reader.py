@@ -63,38 +63,39 @@ class WorkspaceReadExecutor:
 
     def _open_file(self, components: list[str]) -> tuple[int, int]:
         root_fd = os.open(self._root, self._directory_flags)
-        root_stat = os.fstat(root_fd)
-        if not stat.S_ISDIR(root_stat.st_mode):
-            os.close(root_fd)
-            raise OSError("workspace root is not a directory")
-
-        parent_fd = root_fd
-        owns_parent = False
         try:
-            for component in components[:-1]:
-                next_fd = os.open(
-                    component,
-                    self._directory_flags,
+            root_stat = os.fstat(root_fd)
+            if not stat.S_ISDIR(root_stat.st_mode):
+                raise OSError("workspace root is not a directory")
+
+            parent_fd = root_fd
+            owns_parent = False
+            try:
+                for component in components[:-1]:
+                    next_fd = os.open(
+                        component,
+                        self._directory_flags,
+                        dir_fd=parent_fd,
+                    )
+                    next_stat = os.fstat(next_fd)
+                    if not stat.S_ISDIR(next_stat.st_mode) or next_stat.st_dev != root_stat.st_dev:
+                        os.close(next_fd)
+                        raise OSError("workspace path crosses a directory or device boundary")
+                    if owns_parent:
+                        os.close(parent_fd)
+                    parent_fd = next_fd
+                    owns_parent = True
+
+                file_fd = os.open(
+                    components[-1],
+                    self._file_flags,
                     dir_fd=parent_fd,
                 )
-                next_stat = os.fstat(next_fd)
-                if not stat.S_ISDIR(next_stat.st_mode) or next_stat.st_dev != root_stat.st_dev:
-                    os.close(next_fd)
-                    raise OSError("workspace path crosses a directory or device boundary")
+                return file_fd, root_stat.st_dev
+            finally:
                 if owns_parent:
                     os.close(parent_fd)
-                parent_fd = next_fd
-                owns_parent = True
-
-            file_fd = os.open(
-                components[-1],
-                self._file_flags,
-                dir_fd=parent_fd,
-            )
-            return file_fd, root_stat.st_dev
         finally:
-            if owns_parent:
-                os.close(parent_fd)
             os.close(root_fd)
 
     def read_file(
