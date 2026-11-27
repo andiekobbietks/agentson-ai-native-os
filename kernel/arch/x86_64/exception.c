@@ -1,6 +1,8 @@
 #include "idt.h"
 #include "serial.h"
 
+#include <stddef.h>
+
 #include <stdint.h>
 
 #define QEMU_EXIT_PORT 0xF4u
