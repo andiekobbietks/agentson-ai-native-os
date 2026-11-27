@@ -1,6 +1,6 @@
 # Memory Model
 
-**Status:** Initial boot-information parser and physical-frame allocator implemented; QEMU and host-unit validation are pending for this milestone.
+**Status:** Initial boot-information parser and physical-frame allocator passed host unit tests and QEMU integration in GitHub Actions run #13.
 
 ## Address spaces
 
