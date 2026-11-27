@@ -82,15 +82,15 @@ gdt64:
     dw $ - gdt64 - 1
     dd gdt64
 section .bss
-align 4096
+alignb 4096
 pml4: resb 4096
-align 4096
+alignb 4096
 pdpt: resb 4096
-align 4096
+alignb 4096
 pd: resb 4096
-align 16
+alignb 16
 boot_magic: resd 1
 boot_info: resd 1
-align 16
+alignb 16
 stack_bottom: resb 16384
 stack_top:
