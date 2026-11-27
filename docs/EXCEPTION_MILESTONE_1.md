@@ -1,6 +1,6 @@
 # Exception milestone 1: IDT and page-fault diagnostics
 
-**Implementation status:** IDT gates, assembly stubs and a deliberate page-fault test added; CI validation pending.
+**Implementation status:** Passed in GitHub Actions run #27: IDT installed and the expected supervisor page fault was diagnosed with the correct CR2 and error code.
 
 ## Implemented
 
