@@ -17,7 +17,6 @@ EXPECTED_MARKERS = (
     "MULTIBOOT2_MEMORY_MAP: valid",
     "FRAME_ALLOC: valid",
     "PAGING: valid",
-    "PAGING: valid",
     "BOOT_OK: agentson-x86_64-page-table-manager",
 )
 def main() -> int:
