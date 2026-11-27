@@ -19,7 +19,7 @@ On supported POSIX systems it must:
 - open the configured root and every directory component with `O_DIRECTORY | O_NOFOLLOW`;
 - open the final file with `O_NOFOLLOW` and non-blocking semantics;
 - reject non-regular files and device changes across the workspace path;
-- enforce the reserved output limit while reading;
+- enforce the reserved output limit while reading, with an 8 MiB per-read hard cap and a 128-component path-depth cap;
 - detect size/identity/timestamp changes during the read;
 - settle or cancel the policy output reservation on every completion path.
 
