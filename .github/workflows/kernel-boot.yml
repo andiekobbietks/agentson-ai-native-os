@@ -1,0 +1,25 @@
+name: x86-64 kernel boot
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qemu-boot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y make gcc binutils nasm grub-pc-bin grub-common xorriso mtools qemu-system-x86 python3
+      - name: Verify dependencies
+        run: make toolchain-check
+      - name: Build Multiboot2 kernel and ISO
+        run: make clean all check
+      - name: Boot kernel in QEMU
+        run: make test
