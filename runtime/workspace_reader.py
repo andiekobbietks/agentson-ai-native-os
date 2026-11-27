@@ -113,6 +113,8 @@ class WorkspaceReadExecutor:
         Session and agent identifiers must come from the trusted host runtime,
         not from an untrusted tool payload.
         """
+        if type(now_ms) is not int or now_ms < 0:
+            return ExecutionResult(False, "invalid_request_or_resource_path", request_id)
         if completed_at_ms is not None and (
             type(completed_at_ms) is not int or completed_at_ms < now_ms
         ):
