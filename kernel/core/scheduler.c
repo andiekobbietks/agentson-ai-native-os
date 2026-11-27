@@ -1,5 +1,4 @@
 #include "scheduler.h"
-#include "serial.h"
 
 #include <stddef.h>
 #include <stdint.h>
@@ -52,6 +51,8 @@ static void initialise_task(struct scheduler_task *task,
     frame->rip = (uint64_t)(uintptr_t)entry;
     frame->cs = 0x08u;
     frame->rflags = 0x202u;
+    frame->rsp = initial_rsp;
+    frame->ss = 0x10u;
     frame->vector = 32u;
     frame->error_code = 0u;
     task->saved_frame = frame;
@@ -69,20 +70,7 @@ void scheduler_init(void)
 
     initialise_task(&tasks[0], task_a);
     initialise_task(&tasks[1], task_b);
-    serial_write("SCHED_DEBUG: task0 frame=");
-    serial_write_hex64((uint64_t)(uintptr_t)tasks[0].saved_frame);
-    serial_write(" cs=");
-    serial_write_hex64(tasks[0].saved_frame->cs);
-    serial_write(" rip=");
-    serial_write_hex64(tasks[0].saved_frame->rip);
-    serial_write("\n");
-    serial_write("SCHED_DEBUG: task1 frame=");
-    serial_write_hex64((uint64_t)(uintptr_t)tasks[1].saved_frame);
-    serial_write(" cs=");
-    serial_write_hex64(tasks[1].saved_frame->cs);
-    serial_write(" rip=");
-    serial_write_hex64(tasks[1].saved_frame->rip);
-    serial_write("\\n");
+
 }
 
 struct exception_frame *scheduler_on_tick(struct exception_frame *frame)
@@ -91,42 +79,7 @@ struct exception_frame *scheduler_on_tick(struct exception_frame *frame)
         return NULL;
 
     ++tick_count;
-    if (tick_count == 1u) {
-        serial_write("SCHED_DEBUG: irq frame=");
-        serial_write_hex64((uint64_t)(uintptr_t)frame);
-        serial_write(" vector=");
-        serial_write_hex64(frame->vector);
-        serial_write(" cs=");
-        serial_write_hex64(frame->cs);
-        serial_write(" rip=");
-        serial_write_hex64(frame->rip);
-        serial_write("\\n");
-    }
 
-    struct exception_frame *next_frame;
-    if (current_context == 0u) {
-        boot_frame = frame;
-        current_context = 1u;
-        next_frame = tasks[0].saved_frame;
-    } else if (current_context == 1u) {
-        tasks[0].saved_frame = frame;
-        current_context = 2u;
-        next_frame = tasks[1].saved_frame;
-    } else {
-        tasks[1].saved_frame = frame;
-        current_context = 0u;
-        next_frame = boot_frame;
-    }
-
-    if (tick_count == 1u) {
-        serial_write("SCHED_DEBUG: selected frame=");
-        serial_write_hex64((uint64_t)(uintptr_t)next_frame);
-        serial_write(" cs=");
-        serial_write_hex64(next_frame->cs);
-        serial_write(" rip=");
-        serial_write_hex64(next_frame->rip);
-        serial_write("\n");
-    }
     return next_frame;
 }
 
