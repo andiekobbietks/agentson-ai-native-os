@@ -20,7 +20,7 @@
 | Page-table manager | Intermediate table allocation, huge-page split, map/write/translate/unmap | Passed in GitHub Actions run #22 |
 | IDT and exception path | Install vectors 0–31; expected supervisor not-present page fault, CR2 and error code | Passed in GitHub Actions run #29 |
 | PIT timer IRQ | PIC remap, vector 32, PIT ticks, EOI, IRETQ and timer mask | Passed in GitHub Actions; main commit records run #36 |
-| Two-task context switch | Both task counters advance, boot context resumes, timer stops, expected page fault still passes | Pending CI on scheduler implementation branch |
+| Two-task context switch | Both task counters advance, boot context resumes, timer stops, expected page fault still passes | Passed in GitHub Actions run #46 (QEMU) |
 | SMP | AP startup, per-core state, locking and TLB shootdown tests | Not implemented |
 | Model loading/inference | Validated model/tokenizer fixtures, deterministic fixed-prompt output and reference comparison | Not implemented |
 | Agent permissions | Positive and negative capability tests, quotas and fail-closed behaviour | Not implemented |
@@ -40,4 +40,4 @@ The QEMU test runs in a disposable virtual machine and checks serial markers plu
 
 ## Evidence still required
 
-The current bootstrap kernel does not establish production correctness, isolation or security. Before expanding the implementation, add targeted negative tests, stack and interrupt invariants, fault injection, reproducible artifact hashes and review of the actual workflow output. The scheduler experiment remains unvalidated until its own PR workflow succeeds.
+The current bootstrap kernel does not establish production correctness, isolation or security. Before expanding the implementation, add targeted negative tests, stack and interrupt invariants, fault injection, reproducible artifact hashes and review of the actual workflow output. The two-task scheduler experiment passed GitHub Actions run #46, including its QEMU serial-marker and expected-exit checks. Broader scheduler correctness, stack guards, interrupt nesting and SMP remain unvalidated.
