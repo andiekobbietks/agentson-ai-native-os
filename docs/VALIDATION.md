@@ -19,7 +19,7 @@
 | Physical-frame allocator | Reserved-range handling, alignment, allocation/free tests | Passed in GitHub Actions run #13 |
 | Page-table manager | Create tables, split huge page, map/write/translate/unmap | Passed in GitHub Actions run #22 |
 | IDT and exception path | Install vectors 0–31; handle expected supervisor page fault | Passed in GitHub Actions run #29 |
-| PIT timer IRQ | Remap PIC, install vector 32, receive three ticks, EOI and mask IRQ | Implemented; QEMU validation pending in this PR |
+| PIT timer IRQ | Remap PIC, install vector 32, receive three ticks, EOI and mask IRQ | Passed in GitHub Actions run #34 |
 | Inference correctness | Fixed prompts and token output | Not implemented |
 | Agent permissions | Positive and negative capability tests | Not implemented |
 | AgentSON trace | Schema validation and replay | Not implemented |
